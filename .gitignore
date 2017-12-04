@@ -1,0 +1,11 @@
+# Default from bsb -init _ -theme react
+.DS_Store
+.merlin
+.bsb.lock
+npm-debug.log
+/lib/bs/
+/node_modules/
+
+# Misc
+/work/
+/logs/

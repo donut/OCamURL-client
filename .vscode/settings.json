@@ -1,0 +1,8 @@
+{
+	"reason.path.bsb": "/Users/donovan/.npm-packages/bin/bsb",
+	"reason.path.ocamlfind": "/Users/donovan/.npm-packages/bin/ocamlfind",
+	"reason.path.ocamlmerlin": "/Users/donovan/.npm-packages/bin/ocamlmerlin",
+	"reason.path.rebuild": "/Users/donovan/.npm-packages/bin/rebuild",
+	"reason.path.refmt": "/Users/donovan/.npm-packages/bin/refmt",
+	"reason.path.rtop": "/Users/donovan/.npm-packages/bin/rtop"
+}

@@ -253,6 +253,10 @@ bs-platform@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-2.1.0.tgz#63560ff8f7142c9c0631559df1c35590b9f6d8b2"
 
+bs-webapi@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/bs-webapi/-/bs-webapi-0.7.0.tgz#85b47009b342574d80e63799103092b411c90075"
+
 buffer-xor@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/buffer-xor/-/buffer-xor-1.0.3.tgz#26e61ed1422fb70dd42e6e36729ed51d855fe8d9"

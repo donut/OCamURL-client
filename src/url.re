@@ -2,14 +2,6 @@
 [@bs.val] external encodeURIComponent : string => string = "encodeURIComponent";
 [@bs.val] external decodeURIComponent : string => string = "decodeURIComponent";
 
-let optMap = (f) => fun
-  | None => None
-  | Some(x) => Some(f(x));
-
-let optValue = fun 
-  | None => raise(Not_found)
-  | Some(x) => x;
-
 module Scheme = {
   type t = [ `HTTP | `HTTPS ];
   exception UnsupportedScheme(string);
@@ -42,7 +34,7 @@ module Params = {
 
   let ofString = (s:string) : t => {
     let dec = decodeURIComponent;
-    switch (s |> Js.String.replaceByRe([%bs.re "/^\?/"], "")) {
+    switch (s |> Js.String.replaceByRe([%bs.re "/^\\?/"], "")) {
     | "" => []
     |  s => s
       |> Js.String.split("&") |> Array.to_list
@@ -93,7 +85,7 @@ let make = (~id=?, ~scheme, ~user=?, ~pass=?, ~host, ~port=?, ~path="",
     host,
     port,
     path: Path.ofString(path),
-    params: optMap(Params.ofString, query),
+    params: Opt.map(Params.ofString, query),
     fragment
   };
 
@@ -101,7 +93,7 @@ exception MissingPart(string, string);
 
 let ofString = (s) => {
   let a : Js.t({..}) = [%bs.raw "document.createElement('a')"];
-  [%bs.raw {| a.href = s |}];
+  ignore @@ [%bs.raw {| a.href = s |}];
 
   let prop = (name) => {
     let get : (string, Js.t({..})) => string = [%bs.raw {|
@@ -123,7 +115,7 @@ let ofString = (s) => {
     ~user =? propOpt("username"),
     ~pass =? propOpt("password"),
     ~host = propExn("hostname"),
-    ~port =? propOpt("port") |> optMap(int_of_string),
+    ~port =? propOpt("port") |> Opt.map(int_of_string),
     ~path = prop("pathname"),
     ~query =? propOpt("search"),
     ~fragment =? propOpt("hash"),
@@ -132,4 +124,40 @@ let ofString = (s) => {
 };
 
 let ofStringOpt = (s) => 
-  try (Some(ofString(s))) { | _ => None }
+  try (Some(ofString(s))) { | _ => None };
+
+type gqlParamPair = {.
+  "key": string, "value": Js.Nullable.t(string)
+};
+
+type gqlT = {.
+  "scheme": string,
+  "user": Js.Nullable.t(string),
+  "password": Js.Nullable.t(string),
+  "host": string,
+  "port": Js.Nullable.t(int),
+  "path": string,
+  "params": Js.Nullable.t(array(gqlParamPair)),
+  "fragment": Js.Nullable.t(string)
+};
+
+let toGql = (t) : gqlT => {
+  let nullOfOpt = Js.Nullable.from_opt;
+  let paramsToGql = (p:Params.t) =>
+    p |> Params.toList
+      |> List.map((p) => Params.({
+        "key": p.key,
+        "value": Js.Nullable.from_opt(p.value)
+      }))
+      |> Array.of_list;
+  {
+    "scheme": t.scheme |> Scheme.toString |> String.uppercase,
+    "user": t.user |> nullOfOpt,
+    "password": t.pass |> nullOfOpt,
+    "host": t.host,
+    "port": t.port |> nullOfOpt,
+    "path": Path.toString(t.path),
+    "params": t.params |> Opt.map(paramsToGql) |> nullOfOpt,
+    "fragment": t.fragment |> nullOfOpt
+  }
+};

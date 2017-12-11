@@ -16,7 +16,11 @@
   "namespace": true,
   "bs-dependencies": [
     "reason-react",
-    "bs-webapi"
+    "bs-webapi",
+    "reason-apollo"
+  ],
+  "bsc-flags": [
+    "-bs-super-errors"
   ],
   "refmt": 3
 }

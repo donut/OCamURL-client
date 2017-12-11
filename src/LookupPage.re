@@ -44,8 +44,8 @@ let make = (_children) => {
           <p className="error invalid-input">
             (str({j|That doesn't look like a valid URL. $reason|j}))
           </p>
-        | `Valid(_url) =>
-          <p> (str("The URL looks valid.")) </p>
+        | `Valid(url) =>
+          <QueryAliases url />
       };
 
       <section>

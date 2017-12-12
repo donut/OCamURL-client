@@ -11,11 +11,10 @@ let query = [@bs] gql({|
   }
 |});
 
-type error = {."code": string, "message": string };
-type alias = {. "id": string, "name": string, "status": string };
+type error = {. "code": string, "message": string };
 type payload = {.
   "error": Js.Nullable.t(error),
-  "aliases": Js.Nullable.t(array(alias))
+  "aliases": Js.Nullable.t(array(Alias.gqlT))
 };
 type result = {. "aliases": payload };
 
@@ -53,14 +52,15 @@ let make = (~url, _children) => {
               (str("An unknown error occurred."))
             </div>
           }
-          else {
-            ReasonReact.arrayToElement(
-              payload##aliases |> JsOpt.value |>  Array.map((alias) => 
-                <div key=(alias##id)>
-                  (str(alias##name ++ " : " ++ alias##status))
-                </div>
-              )
-            )
+          else { switch (payload##aliases |> JsOpt.value) {
+            | [||] => 
+              <div> (str("no aliases")) </div>
+            |  lst => 
+              ReasonReact.arrayToElement(lst |> Array.map((alias') => {
+                let alias = Alias.ofGql(alias');
+                <AliasWidget key=(alias'##id) alias />
+              }))
+            }
           }
         }
         )

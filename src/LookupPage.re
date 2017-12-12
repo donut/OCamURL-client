@@ -42,7 +42,7 @@ let make = (_children) => {
         | `Unset => ReasonReact.nullElement 
         | `Invalid(reason) => 
           <p className="error invalid-input">
-            (str({j|That doesn't look like a valid URL. $reason|j}))
+            (str({j|That doesn't look like a valid URL: $reason|j}))
           </p>
         | `Valid(url) =>
           <QueryAliases url />

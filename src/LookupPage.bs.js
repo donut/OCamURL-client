@@ -9,7 +9,7 @@ var $$String                   = require("bs-platform/lib/js/string.js");
 var ReasonReact                = require("reason-react/src/ReasonReact.js");
 var Url$ReactTemplate          = require("./url.bs.js");
 var LookupInput$ReactTemplate  = require("./LookupInput.bs.js");
-var QueryAliases$ReactTemplate = require("./queryAliases.bs.js");
+var QueryAliases$ReactTemplate = require("./QueryAliases.bs.js");
 
 function str(prim) {
   return prim;
@@ -39,7 +39,7 @@ function make() {
       var details = typeof input === "number" ? null : (
           input[0] >= 144245463 ? React.createElement("p", {
                   className: "error invalid-input"
-                }, "That doesn\'t look like a valid URL. " + (String(input[1]) + "")) : ReasonReact.element(/* None */0, /* None */0, QueryAliases$ReactTemplate.make(input[1], /* array */[]))
+                }, "That doesn\'t look like a valid URL: " + (String(input[1]) + "")) : ReasonReact.element(/* None */0, /* None */0, QueryAliases$ReactTemplate.make(input[1], /* array */[]))
         );
       return React.createElement("section", undefined, React.createElement("h1", undefined, "OCamURL"), React.createElement("p", undefined, "Enter a URL or alias below."), ReasonReact.element(/* None */0, /* None */0, LookupInput$ReactTemplate.make(initialValue, Curry._1(param[/* reduce */1], onURLInputSubmit), /* array */[])), details);
     });

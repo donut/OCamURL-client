@@ -110,6 +110,7 @@ function make(initialValue, onSubmit, _) {
       return React.createElement("div", {
                   className: "lookup " + status
                 }, React.createElement("input", {
+                      autoFocus: true,
                       placeholder: "Paste a URL",
                       type: "url",
                       value: match[/* value */0],

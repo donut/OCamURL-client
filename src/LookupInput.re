@@ -70,7 +70,7 @@ let make = (~initialValue, ~onSubmit, _children) => {
 			let status = stringOfStatus(url);
 
 			<div className=("lookup " ++ status)>
-				<input _type="url" placeholder="Paste a URL"
+				<input _type="url" placeholder="Paste a URL" autoFocus=Js.true_
 					value
 					onChange=(reduce(change))
 					onBlur=(reduce(submit))

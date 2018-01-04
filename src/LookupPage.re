@@ -45,7 +45,7 @@ let make = (_children) => {
             (str({j|That doesn't look like a valid URL: $reason|j}))
           </p>
         | `Valid(url) =>
-          <QueryAliases url />
+          <ListAliases url />
       };
 
       <section>

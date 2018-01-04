@@ -58,7 +58,7 @@ let make = (~initialValue, ~onSubmit, _children) => {
 		},
 
 		reducer: (action, state) => switch action {
-			| Change(value, url) => ReasonReact.Update({...state, value, url})
+			| Change(value, url) => ReasonReact.Update({value, url})
 			| Submit | KeyDown("Enter") => handleSubmit(state)
 			| KeyDown(_) => ReasonReact.NoUpdate
 		},

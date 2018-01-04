@@ -11,9 +11,8 @@ let query = [@bs] gql({|
   }
 |});
 
-type error = {. "code": string, "message": string };
 type payload = {.
-  "error": Js.Nullable.t(error),
+  "error": Js.Nullable.t(Apollo.error),
   "aliases": Js.Nullable.t(array(Alias.gqlT))
 };
 type result = {. "aliases": payload };
@@ -23,48 +22,12 @@ module Config = {
   type variables = {. "url": Url.gqlT };
 };
 
-module FetchAliases = Apollo.Client.Query(Config);
+module Query = Apollo.Query(Config);
 
-let component = ReasonReact.statelessComponent("QueryAliases");
+let run = (~url) => {
+  let variables = Some({
+    "url": Url.toGql(url)
+  });
 
-let make = (~url, _children) => {
-  {
-    ...component,
-    render: (_self) => {
-      let variables = {
-        "url": Url.toGql(url)
-      };
-      <FetchAliases query variables>
-        (fun
-        | Loading => <div> (str("Loading aliases.")) </div>
-        | Failed(error) => <div> (str("Failed loading aliases: " ++ error)) </div>
-        | Loaded(result) =>  {
-          let payload = result##aliases;
-          if (JsOpt.notNull(payload##error)) {
-            let error = JsOpt.value(payload##error);
-            let className = "error-" ++ error##code;
-            <div className>
-              (str("Failed loading aliases: " ++ error##message))
-            </div>
-          }
-          else if (JsOpt.isNull(payload##aliases)) {
-            <div>
-              (str("An unknown error occurred."))
-            </div>
-          }
-          else { switch (payload##aliases |> JsOpt.value) {
-            | [||] => 
-              <div> (str("no aliases")) </div>
-            |  lst => 
-              ReasonReact.arrayToElement(lst |> Array.map((alias') => {
-                let alias = Alias.ofGql(alias');
-                <AliasWidget key=(alias'##id) alias />
-              }))
-            }
-          }
-        }
-        )
-      </FetchAliases>
-    }
-  }
+  Query.send(`Query, ~query, ~variables);
 };

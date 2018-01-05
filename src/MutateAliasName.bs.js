@@ -6,11 +6,16 @@ var Pervasives           = require("bs-platform/lib/js/pervasives.js");
 var GraphqlTag           = require("graphql-tag");
 var Apollo$ReactTemplate = require("./apollo.bs.js");
 
-var query = GraphqlTag("\n  mutation RenameAlias($input: RenameAliasInput!) {\n    renameAlias(input: $input) {\n      error { code, message }\n      payload { actionTaken }\n    }\n  }\n");
+var mutation = GraphqlTag("\n  mutation RenameAlias($input: RenameAliasInput!) {\n    renameAlias(input: $input) {\n      error { code, message }\n      payload { actionTaken }\n    }\n  }\n");
 
-var Config = /* module */[];
+var request = /* `Mutation */[
+  1035765577,
+  mutation
+];
 
-var Mutation = Apollo$ReactTemplate.Query(Config);
+var Config = /* module */[/* request */request];
+
+var Request = Apollo$ReactTemplate.Request(Config);
 
 function run(name, newName) {
   var now = Pervasives.string_of_float(Date.now());
@@ -20,14 +25,13 @@ function run(name, newName) {
     newName: newName,
     disableAndAddIfUsed: true
   };
-  var variables = /* Some */[{
-      input: input
-    }];
-  return Curry._3(Mutation[/* send */3], /* Mutation */1035765577, query, variables);
+  return Curry._1(Request[/* send */3], /* Some */[{
+                input: input
+              }]);
 }
 
-exports.query    = query;
+exports.mutation = mutation;
 exports.Config   = Config;
-exports.Mutation = Mutation;
+exports.Request  = Request;
 exports.run      = run;
-/* query Not a pure module */
+/* mutation Not a pure module */

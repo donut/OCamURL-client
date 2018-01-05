@@ -7,16 +7,21 @@ var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 
 var Client = ReasonApollo.Create(/* module */[/* uri */"http://mgmt.ocamurl.dev/graphql"]);
 
-function Query() {
+function queryStringOfRequest(param) {
+  return param[1];
+}
+
+function Request(RequestConfig) {
   var CastApolloClient = ApolloClient.Cast(/* module */[]);
   var apolloClient = Client[/* apolloClient */2];
-  var SendFailure = Caml_exceptions.create("Apollo-ReactTemplate.Query(ClientConfig).SendFailure");
-  var send = function (typ, query, variables) {
+  var SendFailure = Caml_exceptions.create("Apollo-ReactTemplate.Request(RequestConfig).SendFailure");
+  var send = function (variables) {
     return new Promise((function (resolve, reject) {
+                  var match = RequestConfig[/* request */0];
                   var requestPromise;
-                  if (typ >= 1035765577) {
+                  if (match[0] >= 1035765577) {
                     var tmp = {
-                      mutation: query
+                      mutation: match[1]
                     };
                     if (variables) {
                       tmp.variables = variables[0];
@@ -25,7 +30,7 @@ function Query() {
                     requestPromise = apolloClient.mutate(conf);
                   } else {
                     var tmp$1 = {
-                      query: query
+                      query: match[1]
                     };
                     if (variables) {
                       tmp$1.variables = variables[0];
@@ -38,10 +43,11 @@ function Query() {
                             resolve(typedResult);
                             return Promise.resolve(/* () */0);
                           })).catch((function (error) {
+                          var queryString = RequestConfig[/* request */0][1];
                           reject([
                                 SendFailure,
                                 error,
-                                query,
+                                queryString,
                                 variables
                               ]);
                           return Promise.resolve(/* () */0);
@@ -57,6 +63,7 @@ function Query() {
         ];
 }
 
-exports.Client = Client;
-exports.Query  = Query;
+exports.Client               = Client;
+exports.queryStringOfRequest = queryStringOfRequest;
+exports.Request              = Request;
 /* Client Not a pure module */

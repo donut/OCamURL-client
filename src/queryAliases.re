@@ -18,16 +18,17 @@ type payload = {.
 type result = {. "aliases": payload };
 
 module Config = {
-  type responseType = result;
+  type response = result;
   type variables = {. "url": Url.gqlT };
+  let request = `Query(query);
 };
 
-module Query = Apollo.Query(Config);
+module Request = Apollo.Request(Config);
 
 let run = (~url) => {
   let variables = Some({
     "url": Url.toGql(url)
   });
 
-  Query.send(`Query, ~query, ~variables);
+  Request.send(~variables);
 };

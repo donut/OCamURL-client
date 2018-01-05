@@ -61,7 +61,7 @@ let make = (~alias, _children) => {
   let renameAlias = (name, reduce) => {
     Js.Promise.(
       MutateAliasName.run(~name=Alias.name(alias), ~newName=name)
-      |> then_((response:MutateAliasName.Config.responseType) => {
+      |> then_((response:MutateAliasName.Config.response) => {
         let maybePayload = response##renameAlias;
         if (JsOpt.notNull(maybePayload##error)) {
           let error = JsOpt.value(maybePayload##error);

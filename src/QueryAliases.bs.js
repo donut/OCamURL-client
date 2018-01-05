@@ -12,20 +12,24 @@ function str(prim) {
 
 var query = GraphqlTag("\n  query GetAliasesByURL($url: AliasesURLInput) {\n    aliases(url: $url) {\n      error { code, message }\n      aliases { id, name, status }\n    }\n  }\n");
 
-var Config = /* module */[];
+var request = /* `Query */[
+  -250086680,
+  query
+];
 
-var Query = Apollo$ReactTemplate.Query(Config);
+var Config = /* module */[/* request */request];
+
+var Request = Apollo$ReactTemplate.Request(Config);
 
 function run(url) {
-  var variables = /* Some */[{
-      url: Url$ReactTemplate.toGql(url)
-    }];
-  return Curry._3(Query[/* send */3], /* Query */-250086680, query, variables);
+  return Curry._1(Request[/* send */3], /* Some */[{
+                url: Url$ReactTemplate.toGql(url)
+              }]);
 }
 
-exports.str    = str;
-exports.query  = query;
-exports.Config = Config;
-exports.Query  = Query;
-exports.run    = run;
+exports.str     = str;
+exports.query   = query;
+exports.Config  = Config;
+exports.Request = Request;
+exports.run     = run;
 /* query Not a pure module */

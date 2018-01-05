@@ -22,7 +22,7 @@ let make = (~url, _children) => {
   let loadList = (url, reduce) => {
     let open Js.Promise;
     QueryAliases.run(~url)
-    |> then_((response:QueryAliases.Config.responseType) => {
+    |> then_((response:QueryAliases.Config.response) => {
       let maybePayload = response##aliases;
       if (JsOpt.notNull(maybePayload##error)) {
         let error = JsOpt.value(maybePayload##error);

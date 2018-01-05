@@ -1,6 +1,6 @@
 [@bs.module] external gql : ReasonApolloTypes.gql = "graphql-tag";
 
-let query = [@bs] gql({|
+let mutation = [@bs] gql({|
   mutation RenameAlias($input: RenameAliasInput!) {
     renameAlias(input: $input) {
       error { code, message }
@@ -27,11 +27,12 @@ type payloadOrError = {.
 };
 
 module Config = {
-  type responseType = {. "renameAlias": payloadOrError };
+  type response = {. "renameAlias": payloadOrError };
   type variables = {. "input": input };
+  let request = `Mutation(mutation);
 };
 
-module Mutation = Apollo.Query(Config);
+module Request = Apollo.Request(Config);
 
 let run = (~name, ~newName) => {
   let now = Js.Date.now() |> string_of_float;
@@ -43,5 +44,5 @@ let run = (~name, ~newName) => {
   };
   let variables = Some({"input": input});
 
-  Mutation.send(`Mutation, ~query, ~variables)
+  Request.send(~variables)
 };

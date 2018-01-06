@@ -8,7 +8,6 @@ var $$String                      = require("bs-platform/lib/js/string.js");
 var Pervasives                    = require("bs-platform/lib/js/pervasives.js");
 var ReasonReact                   = require("reason-react/src/ReasonReact.js");
 var Alias$ReactTemplate           = require("./alias.bs.js");
-var JsOpt$ReactTemplate           = require("./JsOpt.bs.js");
 var MutateAliasName$ReactTemplate = require("./MutateAliasName.bs.js");
 
 function str(prim) {
@@ -163,28 +162,25 @@ function make(alias, _) {
                           (function (param) {
                               var name = param[/* state */2][/* name */2];
                               var reduce = param[/* reduce */1];
-                              MutateAliasName$ReactTemplate.run(Alias$ReactTemplate.name(alias), name).then((function (response) {
-                                        var maybePayload = response.renameAlias;
-                                        if (JsOpt$ReactTemplate.notNull(maybePayload.error)) {
-                                          var error = JsOpt$ReactTemplate.value(maybePayload.error);
+                              MutateAliasName$ReactTemplate.run(Alias$ReactTemplate.name(alias), name).then((function (result) {
+                                      if (result[0] >= 981919598) {
+                                        Curry._2(reduce, (function () {
+                                                return /* Saved */5;
+                                              }), /* () */0);
+                                      } else {
+                                        var exn = result[1];
+                                        if (exn[0] === MutateAliasName$ReactTemplate.Request[/* ResponseError */2]) {
+                                          var message = exn[2];
                                           Curry._2(reduce, (function () {
-                                                  return /* Error */Block.__(1, ["Failed renaming alias: [" + (error.code + ("] " + error.message))]);
-                                                }), /* () */0);
-                                        } else if (JsOpt$ReactTemplate.isNull(maybePayload.payload)) {
-                                          Curry._2(reduce, (function () {
-                                                  return /* Error */Block.__(1, ["Failed renaming alias. Not sure why..."]);
+                                                  return /* Error */Block.__(1, ["Failed renaming: " + message]);
                                                 }), /* () */0);
                                         } else {
+                                          console.log("Failed renaming alias [" + (Alias$ReactTemplate.name(alias) + ("] to [" + (name + "]"))), exn);
                                           Curry._2(reduce, (function () {
-                                                  return /* Saved */5;
+                                                  return /* Error */Block.__(1, ["Failed renaming alias. See console."]);
                                                 }), /* () */0);
                                         }
-                                        return Promise.resolve(/* () */0);
-                                      })).catch((function (error) {
-                                      console.log("Failed renaming alias [" + (Alias$ReactTemplate.name(alias) + ("] to [" + (name + "]"))), error);
-                                      Curry._2(reduce, (function () {
-                                              return /* Error */Block.__(1, ["Failed renaming alias. See console."]);
-                                            }), /* () */0);
+                                      }
                                       return Promise.resolve(/* () */0);
                                     }));
                               return /* () */0;

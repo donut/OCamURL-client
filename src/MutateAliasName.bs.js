@@ -13,7 +13,17 @@ var request = /* `Mutation */[
   mutation
 ];
 
-var Config = /* module */[/* request */request];
+function deconstructResponse(response) {
+  return /* tuple */[
+          response.renameAlias.payload,
+          response.renameAlias.error
+        ];
+}
+
+var Config = /* module */[
+  /* request */request,
+  /* deconstructResponse */deconstructResponse
+];
 
 var Request = Apollo$ReactTemplate.Request(Config);
 
@@ -25,7 +35,7 @@ function run(name, newName) {
     newName: newName,
     disableAndAddIfUsed: true
   };
-  return Curry._1(Request[/* send */3], /* Some */[{
+  return Curry._1(Request[/* send */4], /* Some */[{
                 input: input
               }]);
 }

@@ -61,29 +61,22 @@ let make = (~alias, _children) => {
   let renameAlias = (name, reduce) => {
     Js.Promise.(
       MutateAliasName.run(~name=Alias.name(alias), ~newName=name)
-      |> then_((response:MutateAliasName.Config.response) => {
-        let maybePayload = response##renameAlias;
-        if (JsOpt.notNull(maybePayload##error)) {
-          let error = JsOpt.value(maybePayload##error);
-          reduce((_self) => Error(
-            "Failed renaming alias: [" ++ error##code ++ "] " ++ error##message
-          ))()
-        }
-        else if (JsOpt.isNull(maybePayload##payload)) {
-          reduce((_self) => Error("Failed renaming alias. Not sure why..."))()
-        }
-        else {
+      |> then_((result:MutateAliasName.Request.result) => {
+        switch result {
+        | `Exn(exn) => switch exn {
+          | MutateAliasName.Request.ResponseError(_code, message) => 
+            reduce((_self) => Error("Failed renaming: " ++ message))()
+          | exn => 
+            Js.log2(
+              "Failed renaming alias [" ++ Alias.name(alias) ++ "] to ["
+                ++ name ++ "]",
+              exn
+            );
+            reduce((_self) => Error("Failed renaming alias. See console."))()
+          }
+        | `Payload(_) => 
           reduce((_self) => Saved)()
         };
-        resolve()
-      })
-      |> catch((error) => {
-        Js.log2(
-          "Failed renaming alias [" ++ Alias.name(alias) ++ "] to ["
-            ++ name ++ "]",
-          error
-        );
-        reduce((_self) => Error("Failed renaming alias. See console."))();
         resolve()
       })
       |> ignore

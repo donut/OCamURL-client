@@ -16,20 +16,23 @@ type input = {.
   "disableAndAddIfUsed": Js.boolean
 };
 
-type payload = {.
+type payload' = {.
   "actionTaken": string,
   "clientMutationId": string
 };
 
 type payloadOrError = {.
   "error": Js.Nullable.t(Apollo.error),
-  "payload": Js.Nullable.t(payload)
+  "payload": Js.Nullable.t(payload')
 };
 
 module Config = {
+  type payload = payload';
   type response = {. "renameAlias": payloadOrError };
   type variables = {. "input": input };
   let request = `Mutation(mutation);
+  let deconstructResponse = (response) => 
+    (response##renameAlias##payload, response##renameAlias##error);
 };
 
 module Request = Apollo.Request(Config);

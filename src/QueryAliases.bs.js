@@ -17,12 +17,22 @@ var request = /* `Query */[
   query
 ];
 
-var Config = /* module */[/* request */request];
+function deconstructResponse(response) {
+  return /* tuple */[
+          response.aliases.aliases,
+          response.aliases.error
+        ];
+}
+
+var Config = /* module */[
+  /* request */request,
+  /* deconstructResponse */deconstructResponse
+];
 
 var Request = Apollo$ReactTemplate.Request(Config);
 
 function run(url) {
-  return Curry._1(Request[/* send */3], /* Some */[{
+  return Curry._1(Request[/* send */4], /* Some */[{
                 url: Url$ReactTemplate.toGql(url)
               }]);
 }

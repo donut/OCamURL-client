@@ -11,16 +11,22 @@ let query = [@bs] gql({|
   }
 |});
 
-type payload = {.
+type payload' = array(Alias.gqlT);
+
+type payloadOrError = {.
   "error": Js.Nullable.t(Apollo.error),
-  "aliases": Js.Nullable.t(array(Alias.gqlT))
+  "aliases": Js.Nullable.t(payload')
 };
-type result = {. "aliases": payload };
+
+type result = {. "aliases": payloadOrError };
 
 module Config = {
+  type payload = payload';
   type response = result;
   type variables = {. "url": Url.gqlT };
   let request = `Query(query);
+  let deconstructResponse = (response) => 
+    (response##aliases##aliases, response##aliases##error);
 };
 
 module Request = Apollo.Request(Config);

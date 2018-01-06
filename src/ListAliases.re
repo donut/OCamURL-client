@@ -22,28 +22,19 @@ let make = (~url, _children) => {
   let loadList = (url, reduce) => {
     let open Js.Promise;
     QueryAliases.run(~url)
-    |> then_((response:QueryAliases.Config.response) => {
-      let maybePayload = response##aliases;
-      if (JsOpt.notNull(maybePayload##error)) {
-        let error = JsOpt.value(maybePayload##error);
-        reduce((_self) => Error(
-          "Failed loading: " ++ " [" ++ error##code ++ "] " ++ error##message 
-        ))()
-      }
-      else if (JsOpt.isNull(maybePayload##aliases)) {
-        reduce((_self) => Error("Failed loading alias list. Dunno why."))()
-      }
-      else {
-        let lst = maybePayload##aliases
-          |> JsOpt.value
-          |> Js.Array.map((a) => Alias.ofGql(a)); 
+    |> then_((result:QueryAliases.Request.result) => {
+      switch result {
+      | `Exn(exn) => switch exn {
+        | QueryAliases.Request.ResponseError(_code, message) => 
+          reduce((_self) => Error("Failed loading: " ++ message))()
+        | exn => 
+          Js.log3("Failed loading alias list for URL.", url, exn);
+          reduce((_self) => Error("Failed loading alias list. See console."))()
+        }
+      | `Payload(payload) => 
+        let lst = payload |> Js.Array.map((a) => Alias.ofGql(a)); 
         reduce((_self) => Loaded(lst))()
       };
-      resolve()
-    })
-    |> catch((error) => {
-      Js.log3("Failed loading alias list for URL.", url, error);
-      reduce((_self) => Error("Failed loading alias list. See console."))();
       resolve()
     })
     |> ignore;

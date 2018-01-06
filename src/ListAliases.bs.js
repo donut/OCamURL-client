@@ -8,7 +8,6 @@ var React                      = require("react");
 var Pervasives                 = require("bs-platform/lib/js/pervasives.js");
 var ReasonReact                = require("reason-react/src/ReasonReact.js");
 var Alias$ReactTemplate        = require("./alias.bs.js");
-var JsOpt$ReactTemplate        = require("./JsOpt.bs.js");
 var AliasWidget$ReactTemplate  = require("./AliasWidget.bs.js");
 var QueryAliases$ReactTemplate = require("./QueryAliases.bs.js");
 
@@ -24,29 +23,26 @@ function make(url, _) {
       return /* SideEffects */Block.__(2, [(function (param) {
                     var url$1 = url;
                     var reduce = param[/* reduce */1];
-                    QueryAliases$ReactTemplate.run(url$1).then((function (response) {
-                              var maybePayload = response.aliases;
-                              if (JsOpt$ReactTemplate.notNull(maybePayload.error)) {
-                                var error = JsOpt$ReactTemplate.value(maybePayload.error);
+                    QueryAliases$ReactTemplate.run(url$1).then((function (result) {
+                            if (result[0] >= 981919598) {
+                              var lst = result[1].map(Alias$ReactTemplate.ofGql);
+                              Curry._2(reduce, (function () {
+                                      return /* Loaded */Block.__(1, [lst]);
+                                    }), /* () */0);
+                            } else {
+                              var exn = result[1];
+                              if (exn[0] === QueryAliases$ReactTemplate.Request[/* ResponseError */2]) {
+                                var message = exn[2];
                                 Curry._2(reduce, (function () {
-                                        return /* Error */Block.__(0, ["Failed loading:  [" + (error.code + ("] " + error.message))]);
-                                      }), /* () */0);
-                              } else if (JsOpt$ReactTemplate.isNull(maybePayload.aliases)) {
-                                Curry._2(reduce, (function () {
-                                        return /* Error */Block.__(0, ["Failed loading alias list. Dunno why."]);
+                                        return /* Error */Block.__(0, ["Failed loading: " + message]);
                                       }), /* () */0);
                               } else {
-                                var lst = JsOpt$ReactTemplate.value(maybePayload.aliases).map(Alias$ReactTemplate.ofGql);
+                                console.log("Failed loading alias list for URL.", url$1, exn);
                                 Curry._2(reduce, (function () {
-                                        return /* Loaded */Block.__(1, [lst]);
+                                        return /* Error */Block.__(0, ["Failed loading alias list. See console."]);
                                       }), /* () */0);
                               }
-                              return Promise.resolve(/* () */0);
-                            })).catch((function (error) {
-                            console.log("Failed loading alias list for URL.", url$1, error);
-                            Curry._2(reduce, (function () {
-                                    return /* Error */Block.__(0, ["Failed loading alias list. See console."]);
-                                  }), /* () */0);
+                            }
                             return Promise.resolve(/* () */0);
                           }));
                     return /* () */0;

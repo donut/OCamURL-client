@@ -1,5 +1,6 @@
 
 let str = ReasonReact.stringToElement;
+let toJsBool = Js.Boolean.to_js_boolean;
 
 module Mode = {
   type t = Static | Rename | Deleted;
@@ -84,6 +85,46 @@ let make = (~alias, _children) => {
     ()
   };
 
+  let disableAlias = (name, reduce) => {
+    MutateAliasStatus.run(~name, `Disable) 
+    |> Js.Promise.then_((result:MutateAliasStatus.DisableRequest.result) => {
+      switch result {
+      | `Exn(exn) => switch exn {
+        | MutateAliasStatus.DisableRequest.ResponseError(_code, message) => 
+          reduce((_self) => Error("Failed disabling: " ++ message))()
+        | exn => 
+          Js.log2("Failed disabling alias [" ++ Alias.name(alias) ++ "].", exn);
+          reduce((_self) => Error("Failed disabling alias. See console."))()
+        }
+      | `Payload(_) =>
+        reduce((_self) => Saved)()
+      };
+      Js.Promise.resolve()
+    })
+    |> ignore;
+    ()
+  };
+
+  let enableAlias = (name, reduce) => {
+    MutateAliasStatus.run(~name, `Enable) 
+    |> Js.Promise.then_((result:MutateAliasStatus.EnableRequest.result) => {
+      switch result {
+      | `Exn(exn) => switch exn {
+        | MutateAliasStatus.EnableRequest.ResponseError(_code, message) => 
+          reduce((_self) => Error("Failed enabling: " ++ message))()
+        | exn => 
+          Js.log2("Failed enabling alias [" ++ Alias.name(alias) ++ "].", exn);
+          reduce((_self) => Error("Failed enabling alias. See console."))()
+        }
+      | `Payload(_) =>
+        reduce((_self) => Saved)()
+      };
+      Js.Promise.resolve()
+    })
+    |> ignore;
+    ()
+  };
+
   {
     ...component,
 
@@ -109,11 +150,23 @@ let make = (~alias, _children) => {
             {...state, mode: Static, saving: Yes },
             ({ state: { name }, reduce }) => renameAlias(name, reduce)
           )
-      }
-      | Enable =>
-        ReasonReact.Update({...state, saving: Yes, status: `Enabled})
-      | Disable => 
-        ReasonReact.Update({...state, saving: Yes, status: `Disabled})
+        }
+      | Enable => switch (state.status == `Enabled) {
+        | true => ReasonReact.NoUpdate
+        | false => 
+          ReasonReact.UpdateWithSideEffects(
+            {...state, saving: Yes, status: `Enabled},
+            ({ state: { name }, reduce }) => enableAlias(name, reduce)
+          )
+        }
+      | Disable => switch (state.status == `Disabled) {
+        | true => ReasonReact.NoUpdate
+        | false => 
+          ReasonReact.UpdateWithSideEffects(
+            {...state, saving: Yes, status: `Disabled},
+            ({ state: { name }, reduce }) => disableAlias(name, reduce)
+          )
+        }
       | Delete => 
         ReasonReact.Update({...state,
           mode: Deleted, saving: Yes, status: `Disabled })
@@ -150,10 +203,28 @@ let make = (~alias, _children) => {
       | Yes => <div className="saving-status"> (str("Saving...")) </div>
       | Error => <div className="saving-status error"> (str(error)) </div>
       };
+
+      let statusToggle = switch status {
+      | `Disabled =>
+        <button className="status enable"
+                onClick=(reduce((_) => Enable))
+                disabled=(SavingStatus.toBool(saving) |> toJsBool)>
+          (str("Enable"))
+        </button>
+      | `Enabled => 
+        <button className="status disable"
+                onClick=(reduce((_) => Disable))
+                disabled=(SavingStatus.toBool(saving) |> toJsBool)>
+          (str("Disable"))
+        </button>
+      };
       
       <article id className>
         <h1> (header) </h1>
-        <div className="status"> (Alias.statusAsString(alias) |> str) </div>
+        <div className="status"> (Alias.Status.toString(status) |> str) </div>
+        <div className="actions">
+          (statusToggle)
+        </div>
         (message)
       </article>
     }

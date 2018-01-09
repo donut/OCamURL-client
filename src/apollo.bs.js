@@ -9,6 +9,8 @@ var JsOpt$ReactTemplate = require("./JsOpt.bs.js");
 
 var Client = ReasonApollo.Create(/* module */[/* uri */"http://mgmt.ocamurl.dev/graphql"]);
 
+var ResponseError = Caml_exceptions.create("Apollo-ReactTemplate.ResponseError");
+
 function queryStringOfRequest(param) {
   return param[1];
 }
@@ -16,7 +18,6 @@ function queryStringOfRequest(param) {
 function Request(RequestConfig) {
   var CastApolloClient = ApolloClient.Cast(/* module */[]);
   var apolloClient = Client[/* apolloClient */2];
-  var ResponseError = Caml_exceptions.create("Apollo-ReactTemplate.Request(RequestConfig).ResponseError");
   var SendFailure = Caml_exceptions.create("Apollo-ReactTemplate.Request(RequestConfig).SendFailure");
   var send = function (variables) {
     return new Promise((function (resolve, _) {
@@ -91,13 +92,13 @@ function Request(RequestConfig) {
   return /* module */[
           /* CastApolloClient */CastApolloClient,
           /* apolloClient */apolloClient,
-          /* ResponseError */ResponseError,
           /* SendFailure */SendFailure,
           /* send */send
         ];
 }
 
 exports.Client               = Client;
+exports.ResponseError        = ResponseError;
 exports.queryStringOfRequest = queryStringOfRequest;
 exports.Request              = Request;
 /* Client Not a pure module */

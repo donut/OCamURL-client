@@ -8,6 +8,7 @@ var React                      = require("react");
 var Pervasives                 = require("bs-platform/lib/js/pervasives.js");
 var ReasonReact                = require("reason-react/src/ReasonReact.js");
 var Alias$ReactTemplate        = require("./alias.bs.js");
+var Apollo$ReactTemplate       = require("./apollo.bs.js");
 var AliasWidget$ReactTemplate  = require("./AliasWidget.bs.js");
 var QueryAliases$ReactTemplate = require("./QueryAliases.bs.js");
 
@@ -31,7 +32,7 @@ function make(url, _) {
                                     }), /* () */0);
                             } else {
                               var exn = result[1];
-                              if (exn[0] === QueryAliases$ReactTemplate.Request[/* ResponseError */2]) {
+                              if (exn[0] === Apollo$ReactTemplate.ResponseError) {
                                 var message = exn[2];
                                 Curry._2(reduce, (function () {
                                         return /* Error */Block.__(0, ["Failed loading: " + message]);

@@ -25,7 +25,7 @@ let make = (~url, _children) => {
     |> then_((result:QueryAliases.Request.result) => {
       switch result {
       | `Exn(exn) => switch exn {
-        | QueryAliases.Request.ResponseError(_code, message) => 
+        | Apollo.ResponseError(_code, message) => 
           reduce((_self) => Error("Failed loading: " ++ message))()
         | exn => 
           Js.log3("Failed loading alias list for URL.", url, exn);

@@ -43,6 +43,14 @@ type action =
   | Error(string)
   | Nevermind;
 
+let handleExn = (failedAction, ~id, ~exn, ~reduce) => switch exn {
+  | Apollo.ResponseError(_code, message) => 
+    reduce((_self) => Error(failedAction ++ ": " ++ message))()
+  | exn => 
+    Js.log2(failedAction ++ " [" ++ id ++ "]", exn);
+    reduce((_self) => Error(failedAction ++ ". See console."))()
+};
+
 let component = ReasonReact.reducerComponent("AliasWidget");
 
 let make = (~alias, _children) => {
@@ -62,24 +70,18 @@ let make = (~alias, _children) => {
   let renameAlias = (name, reduce) => {
     Js.Promise.(
       MutateAliasName.run(~name=Alias.name(alias), ~newName=name)
+
       |> then_((result:MutateAliasName.Request.result) => {
         switch result {
-        | `Exn(exn) => switch exn {
-          | MutateAliasName.Request.ResponseError(_code, message) => 
-            reduce((_self) => Error("Failed renaming: " ++ message))()
-          | exn => 
-            Js.log2(
-              "Failed renaming alias [" ++ Alias.name(alias) ++ "] to ["
-                ++ name ++ "]",
-              exn
-            );
-            reduce((_self) => Error("Failed renaming alias. See console."))()
-          }
+        | `Exn(exn) =>
+          handleExn("Failed renaming alias", ~id=Alias.name(alias),
+                    ~exn, ~reduce)
         | `Payload(_) => 
           reduce((_self) => Saved)()
         };
         resolve()
       })
+
       |> ignore
     );
     ()
@@ -89,13 +91,9 @@ let make = (~alias, _children) => {
     MutateAliasStatus.run(~name, `Disable) 
     |> Js.Promise.then_((result:MutateAliasStatus.DisableRequest.result) => {
       switch result {
-      | `Exn(exn) => switch exn {
-        | MutateAliasStatus.DisableRequest.ResponseError(_code, message) => 
-          reduce((_self) => Error("Failed disabling: " ++ message))()
-        | exn => 
-          Js.log2("Failed disabling alias [" ++ Alias.name(alias) ++ "].", exn);
-          reduce((_self) => Error("Failed disabling alias. See console."))()
-        }
+      | `Exn(exn) =>
+        handleExn("Failed disabling alias", ~id=Alias.name(alias),
+                  ~exn, ~reduce)
       | `Payload(_) =>
         reduce((_self) => Saved)()
       };
@@ -107,21 +105,36 @@ let make = (~alias, _children) => {
 
   let enableAlias = (name, reduce) => {
     MutateAliasStatus.run(~name, `Enable) 
+
     |> Js.Promise.then_((result:MutateAliasStatus.EnableRequest.result) => {
       switch result {
-      | `Exn(exn) => switch exn {
-        | MutateAliasStatus.EnableRequest.ResponseError(_code, message) => 
-          reduce((_self) => Error("Failed enabling: " ++ message))()
-        | exn => 
-          Js.log2("Failed enabling alias [" ++ Alias.name(alias) ++ "].", exn);
-          reduce((_self) => Error("Failed enabling alias. See console."))()
-        }
+      | `Exn(exn) =>
+        handleExn("Failed enabling alias", ~id=Alias.name(alias),
+                  ~exn, ~reduce)
       | `Payload(_) =>
         reduce((_self) => Saved)()
       };
       Js.Promise.resolve()
     })
     |> ignore;
+
+    ()
+  };
+
+  let deleteAlias = (name, reduce) => {
+    MutationDeleteAlias.run(~name)
+
+    |> Js.Promise.then_((result:MutationDeleteAlias.Request.result) => {
+      switch result {
+      | `Exn(exn) => 
+        handleExn("Failed deleting alias", ~id=Alias.name(alias), ~exn, ~reduce)
+      | `Payload(_) =>
+        reduce((_self) => Saved)()
+      };
+      Js.Promise.resolve()
+    })
+    |> ignore;
+
     ()
   };
 
@@ -167,9 +180,11 @@ let make = (~alias, _children) => {
             ({ state: { name }, reduce }) => disableAlias(name, reduce)
           )
         }
-      | Delete => 
-        ReasonReact.Update({...state,
-          mode: Deleted, saving: Yes, status: `Disabled })
+      | Delete =>
+        ReasonReact.UpdateWithSideEffects(
+          {...state, mode: Deleted, saving: Yes, status: `Disabled },
+          ({ state: { name }, reduce }) => deleteAlias(name, reduce)
+        )
       | Saved =>
         ReasonReact.Update({...state, saving: No})
       | Error(error) => 
@@ -185,9 +200,9 @@ let make = (~alias, _children) => {
         | (Deleted, _) | (_, Yes) =>
           (name |> str)
         | (Static, _) => 
-          <button _type="button" onClick=(reduce(handleHeaderClick))>
+          <span onClick=(reduce(handleHeaderClick))>
             (name |> str)
-          </button>
+          </span>
         | (Rename, _) => 
           <input value=name required=Js.true_ autoFocus=Js.true_ 
             onChange=(reduce(handleChange))
@@ -218,12 +233,21 @@ let make = (~alias, _children) => {
           (str("Disable"))
         </button>
       };
+
+      let deleteAction = {
+        <button className="delete"
+                onClick=(reduce((_) => Delete))
+                disabled=(SavingStatus.toBool(saving) |> toJsBool)>
+          (str("Delete"))
+        </button>
+      };
       
       <article id className>
         <h1> (header) </h1>
         <div className="status"> (Alias.Status.toString(status) |> str) </div>
         <div className="actions">
           (statusToggle)
+          (deleteAction)
         </div>
         (message)
       </article>

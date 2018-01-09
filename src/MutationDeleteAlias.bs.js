@@ -6,7 +6,7 @@ var Pervasives           = require("bs-platform/lib/js/pervasives.js");
 var GraphqlTag           = require("graphql-tag");
 var Apollo$ReactTemplate = require("./apollo.bs.js");
 
-var mutation = GraphqlTag("\n  mutation RenameAlias($input: RenameAliasInput!) {\n    renameAlias(input: $input) {\n      error { code, message }\n      payload { actionTaken }\n    }\n  }\n");
+var mutation = GraphqlTag("\n  mutation DeleteAlias($input: DeleteAliasInput!) {\n    deleteAlias(input: $input) {\n      error { code, message }\n      payload { acitonTaken }\n    }\n  }\n");
 
 var request = /* `Mutation */[
   1035765577,
@@ -15,8 +15,8 @@ var request = /* `Mutation */[
 
 function deconstructResponse(response) {
   return /* tuple */[
-          response.renameAlias.payload,
-          response.renameAlias.error
+          response.deleteAlias.payload,
+          response.deleteAlias.error
         ];
 }
 
@@ -27,13 +27,12 @@ var Config = /* module */[
 
 var Request = Apollo$ReactTemplate.Request(Config);
 
-function run(name, newName) {
+function run(name) {
   var now = Pervasives.string_of_float(Date.now());
   var input = {
-    clientMutationId: name + ("///" + (newName + ("///" + now))),
+    clientMutationId: "deleteAlias///" + (name + ("///" + now)),
     name: name,
-    newName: newName,
-    disableAndAddIfUsed: true
+    disableIfUsed: true
   };
   return Curry._1(Request[/* send */3], /* Some */[{
                 input: input

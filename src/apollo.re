@@ -3,6 +3,8 @@ module Client = ReasonApollo.Create({
   let uri = "http://mgmt.ocamurl.dev/graphql";
 });
 
+exception ResponseError(string, string);
+
 type error = {. "code": string, "message": string };
 
 type request = 
@@ -33,7 +35,6 @@ module Request = (RequestConfig: RequestConfig) => {
     "data": RequestConfig.response, "loading": bool
   } = "%identity";
 
-  exception ResponseError(string, string);
   exception SendFailure(Js.Promise.error,
                         ReasonApolloTypes.queryString,
                         option(RequestConfig.variables));

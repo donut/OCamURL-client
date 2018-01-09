@@ -61,9 +61,9 @@ function run(name, action) {
       input: input
     }];
   if (action >= 756818595) {
-    return Curry._1(EnableRequest[/* send */4], variables);
+    return Curry._1(EnableRequest[/* send */3], variables);
   } else {
-    return Curry._1(DisableRequest[/* send */4], variables);
+    return Curry._1(DisableRequest[/* send */3], variables);
   }
 }
 

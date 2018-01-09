@@ -32,7 +32,7 @@ var Config = /* module */[
 var Request = Apollo$ReactTemplate.Request(Config);
 
 function run(url) {
-  return Curry._1(Request[/* send */4], /* Some */[{
+  return Curry._1(Request[/* send */3], /* Some */[{
                 url: Url$ReactTemplate.toGql(url)
               }]);
 }

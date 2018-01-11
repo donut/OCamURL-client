@@ -322,8 +322,8 @@ function make(alias, onChange, _) {
         return /* Update */Block.__(0, [/* record */[
                     /* mode */state[/* mode */0],
                     /* saving : Error */2,
-                    /* name */state[/* name */2],
-                    /* status */state[/* status */3],
+                    /* name */Alias$ReactTemplate.name(alias),
+                    /* status */Alias$ReactTemplate.status(alias),
                     /* error */action[0]
                   ]]);
       } else {

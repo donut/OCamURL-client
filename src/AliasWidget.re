@@ -190,8 +190,13 @@ let make = (~alias, ~onChange, _children) => {
           {...state, saving: No},
           (_self) => onChange()
         )
-      | Error(error) => 
-        ReasonReact.Update({...state, saving: Error, error})
+      | Error(message) => 
+        ReasonReact.Update({...state,
+          name: Alias.name(alias),
+          status: Alias.status(alias),
+          saving: Error,
+          error: message
+        })
       | Nevermind =>  
         ReasonReact.NoUpdate
     },

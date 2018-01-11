@@ -154,12 +154,14 @@ let make = (~alias, ~onChange, _children) => {
       }
     },
 
-    reducer: (action, state) => switch action {
-      | EnterRenameMode =>
+    reducer: (action, state) => {
+      let currentlySaving = SavingStatus.toBool(state.saving);
+      switch (action, currentlySaving) {
+      | (EnterRenameMode, false) =>
         ReasonReact.Update({...state, mode: Rename})
-      | InputChange(name) =>
+      | (InputChange(name), false) =>
         ReasonReact.Update({...state, name})
-      | Rename => switch (state.name == Alias.name(alias)) {
+      | (Rename, false) => switch (state.name == Alias.name(alias)) {
         | true => ReasonReact.Update({...state, mode: Static })
         | false =>
           ReasonReact.UpdateWithSideEffects(
@@ -167,7 +169,7 @@ let make = (~alias, ~onChange, _children) => {
             ({ state: { name }, reduce }) => renameAlias(name, reduce)
           )
         }
-      | Enable => switch (state.status == `Enabled) {
+      | (Enable, false) => switch (state.status == `Enabled) {
         | true => ReasonReact.NoUpdate
         | false => 
           ReasonReact.UpdateWithSideEffects(
@@ -175,7 +177,7 @@ let make = (~alias, ~onChange, _children) => {
             ({ state: { name }, reduce }) => enableAlias(name, reduce)
           )
         }
-      | Disable => switch (state.status == `Disabled) {
+      | (Disable, false) => switch (state.status == `Disabled) {
         | true => ReasonReact.NoUpdate
         | false => 
           ReasonReact.UpdateWithSideEffects(
@@ -183,30 +185,32 @@ let make = (~alias, ~onChange, _children) => {
             ({ state: { name }, reduce }) => disableAlias(name, reduce)
           )
         }
-      | Delete =>
+      | (Delete, false) =>
         ReasonReact.UpdateWithSideEffects(
           {...state, mode: Deleted, saving: Yes, status: `Disabled },
           ({ state: { name }, reduce }) => deleteAlias(name, reduce)
         )
-      | Saved =>
+      | (Saved, true) =>
         ReasonReact.UpdateWithSideEffects(
           {...state, saving: No},
           (_self) => onChange()
         )
-      | DisabledAndAdded =>
+      | (DisabledAndAdded, true) =>
         ReasonReact.UpdateWithSideEffects(
           {...state, name: Alias.name(alias), status: `Disabled, saving: No},
           (_self) => onChange()
         )
-      | Error(message) => 
+      | (Error(message), _saving) => 
         ReasonReact.Update({...state,
           name: Alias.name(alias),
           status: Alias.status(alias),
           saving: Error,
           error: message
         })
-      | Nevermind =>  
+      | (Nevermind, _saving)
+      | (        _, _saving) =>  
         ReasonReact.NoUpdate
+      }
     },
 
     render: ({ state: { mode, saving, error, name, status }, reduce }) => {

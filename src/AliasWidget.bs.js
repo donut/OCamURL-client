@@ -170,97 +170,146 @@ function make(alias, onChange, _) {
             ];
     });
   newrecord[/* reducer */12] = (function (action, state) {
+      var currentlySaving = toBool(state[/* saving */1]);
       if (typeof action === "number") {
         switch (action) {
           case 0 : 
-              return /* Update */Block.__(0, [/* record */[
-                          /* mode : Rename */1,
-                          /* saving */state[/* saving */1],
-                          /* name */state[/* name */2],
-                          /* status */state[/* status */3],
-                          /* error */state[/* error */4]
-                        ]]);
-          case 1 : 
-              var match = +(state[/* name */2] === Alias$ReactTemplate.name(alias));
-              if (match !== 0) {
+              if (currentlySaving !== 0) {
+                return /* NoUpdate */0;
+              } else {
                 return /* Update */Block.__(0, [/* record */[
-                            /* mode : Static */0,
+                            /* mode : Rename */1,
                             /* saving */state[/* saving */1],
                             /* name */state[/* name */2],
                             /* status */state[/* status */3],
                             /* error */state[/* error */4]
                           ]]);
+              }
+          case 1 : 
+              if (currentlySaving !== 0) {
+                return /* NoUpdate */0;
               } else {
-                return /* UpdateWithSideEffects */Block.__(3, [
-                          /* record */[
-                            /* mode : Static */0,
-                            /* saving : Yes */1,
-                            /* name */state[/* name */2],
-                            /* status */state[/* status */3],
-                            /* error */state[/* error */4]
-                          ],
-                          (function (param) {
-                              var name = param[/* state */2][/* name */2];
-                              var reduce = param[/* reduce */1];
-                              MutateAliasName$ReactTemplate.run(Alias$ReactTemplate.name(alias), name).then((function (result) {
-                                      if (result[0] >= 981919598) {
-                                        var match = $$String.lowercase(result[1].actionTaken);
-                                        if (match === "disable_and_add") {
-                                          Curry._2(reduce, (function () {
-                                                  return /* DisabledAndAdded */6;
-                                                }), /* () */0);
+                var match = +(state[/* name */2] === Alias$ReactTemplate.name(alias));
+                if (match !== 0) {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* mode : Static */0,
+                              /* saving */state[/* saving */1],
+                              /* name */state[/* name */2],
+                              /* status */state[/* status */3],
+                              /* error */state[/* error */4]
+                            ]]);
+                } else {
+                  return /* UpdateWithSideEffects */Block.__(3, [
+                            /* record */[
+                              /* mode : Static */0,
+                              /* saving : Yes */1,
+                              /* name */state[/* name */2],
+                              /* status */state[/* status */3],
+                              /* error */state[/* error */4]
+                            ],
+                            (function (param) {
+                                var name = param[/* state */2][/* name */2];
+                                var reduce = param[/* reduce */1];
+                                MutateAliasName$ReactTemplate.run(Alias$ReactTemplate.name(alias), name).then((function (result) {
+                                        if (result[0] >= 981919598) {
+                                          var match = $$String.lowercase(result[1].actionTaken);
+                                          if (match === "disable_and_add") {
+                                            Curry._2(reduce, (function () {
+                                                    return /* DisabledAndAdded */6;
+                                                  }), /* () */0);
+                                          } else {
+                                            Curry._2(reduce, (function () {
+                                                    return /* Saved */5;
+                                                  }), /* () */0);
+                                          }
                                         } else {
+                                          handleExn("Failed renaming alias", Alias$ReactTemplate.name(alias), result[1], reduce);
+                                        }
+                                        return Promise.resolve(/* () */0);
+                                      }));
+                                return /* () */0;
+                              })
+                          ]);
+                }
+              }
+              break;
+          case 2 : 
+              if (currentlySaving !== 0) {
+                return /* NoUpdate */0;
+              } else {
+                var match$1 = +(state[/* status */3] === /* Enabled */-880661407);
+                if (match$1 !== 0) {
+                  return /* NoUpdate */0;
+                } else {
+                  return /* UpdateWithSideEffects */Block.__(3, [
+                            /* record */[
+                              /* mode */state[/* mode */0],
+                              /* saving : Yes */1,
+                              /* name */state[/* name */2],
+                              /* status : Enabled */-880661407,
+                              /* error */state[/* error */4]
+                            ],
+                            (function (param) {
+                                var name = param[/* state */2][/* name */2];
+                                var reduce = param[/* reduce */1];
+                                MutateAliasStatus$ReactTemplate.run(name, /* Enable */756818595).then((function (result) {
+                                        if (result[0] >= 981919598) {
                                           Curry._2(reduce, (function () {
                                                   return /* Saved */5;
                                                 }), /* () */0);
+                                        } else {
+                                          handleExn("Failed enabling alias", Alias$ReactTemplate.name(alias), result[1], reduce);
                                         }
-                                      } else {
-                                        handleExn("Failed renaming alias", Alias$ReactTemplate.name(alias), result[1], reduce);
-                                      }
-                                      return Promise.resolve(/* () */0);
-                                    }));
-                              return /* () */0;
-                            })
-                        ]);
+                                        return Promise.resolve(/* () */0);
+                                      }));
+                                return /* () */0;
+                              })
+                          ]);
+                }
               }
-          case 2 : 
-              var match$1 = +(state[/* status */3] === /* Enabled */-880661407);
-              if (match$1 !== 0) {
-                return /* NoUpdate */0;
-              } else {
-                return /* UpdateWithSideEffects */Block.__(3, [
-                          /* record */[
-                            /* mode */state[/* mode */0],
-                            /* saving : Yes */1,
-                            /* name */state[/* name */2],
-                            /* status : Enabled */-880661407,
-                            /* error */state[/* error */4]
-                          ],
-                          (function (param) {
-                              var name = param[/* state */2][/* name */2];
-                              var reduce = param[/* reduce */1];
-                              MutateAliasStatus$ReactTemplate.run(name, /* Enable */756818595).then((function (result) {
-                                      if (result[0] >= 981919598) {
-                                        Curry._2(reduce, (function () {
-                                                return /* Saved */5;
-                                              }), /* () */0);
-                                      } else {
-                                        handleExn("Failed enabling alias", Alias$ReactTemplate.name(alias), result[1], reduce);
-                                      }
-                                      return Promise.resolve(/* () */0);
-                                    }));
-                              return /* () */0;
-                            })
-                        ]);
-              }
+              break;
           case 3 : 
-              var match$2 = +(state[/* status */3] === /* Disabled */-709493348);
-              if (match$2 !== 0) {
+              if (currentlySaving !== 0) {
+                return /* NoUpdate */0;
+              } else {
+                var match$2 = +(state[/* status */3] === /* Disabled */-709493348);
+                if (match$2 !== 0) {
+                  return /* NoUpdate */0;
+                } else {
+                  return /* UpdateWithSideEffects */Block.__(3, [
+                            /* record */[
+                              /* mode */state[/* mode */0],
+                              /* saving : Yes */1,
+                              /* name */state[/* name */2],
+                              /* status : Disabled */-709493348,
+                              /* error */state[/* error */4]
+                            ],
+                            (function (param) {
+                                var name = param[/* state */2][/* name */2];
+                                var reduce = param[/* reduce */1];
+                                MutateAliasStatus$ReactTemplate.run(name, /* Disable */-22441528).then((function (result) {
+                                        if (result[0] >= 981919598) {
+                                          Curry._2(reduce, (function () {
+                                                  return /* Saved */5;
+                                                }), /* () */0);
+                                        } else {
+                                          handleExn("Failed disabling alias", Alias$ReactTemplate.name(alias), result[1], reduce);
+                                        }
+                                        return Promise.resolve(/* () */0);
+                                      }));
+                                return /* () */0;
+                              })
+                          ]);
+                }
+              }
+              break;
+          case 4 : 
+              if (currentlySaving !== 0) {
                 return /* NoUpdate */0;
               } else {
                 return /* UpdateWithSideEffects */Block.__(3, [
                           /* record */[
-                            /* mode */state[/* mode */0],
+                            /* mode : Deleted */2,
                             /* saving : Yes */1,
                             /* name */state[/* name */2],
                             /* status : Disabled */-709493348,
@@ -269,13 +318,13 @@ function make(alias, onChange, _) {
                           (function (param) {
                               var name = param[/* state */2][/* name */2];
                               var reduce = param[/* reduce */1];
-                              MutateAliasStatus$ReactTemplate.run(name, /* Disable */-22441528).then((function (result) {
+                              MutationDeleteAlias$ReactTemplate.run(name).then((function (result) {
                                       if (result[0] >= 981919598) {
                                         Curry._2(reduce, (function () {
                                                 return /* Saved */5;
                                               }), /* () */0);
                                       } else {
-                                        handleExn("Failed disabling alias", Alias$ReactTemplate.name(alias), result[1], reduce);
+                                        handleExn("Failed deleting alias", Alias$ReactTemplate.name(alias), result[1], reduce);
                                       }
                                       return Promise.resolve(/* () */0);
                                     }));
@@ -283,57 +332,40 @@ function make(alias, onChange, _) {
                             })
                         ]);
               }
-          case 4 : 
-              return /* UpdateWithSideEffects */Block.__(3, [
-                        /* record */[
-                          /* mode : Deleted */2,
-                          /* saving : Yes */1,
-                          /* name */state[/* name */2],
-                          /* status : Disabled */-709493348,
-                          /* error */state[/* error */4]
-                        ],
-                        (function (param) {
-                            var name = param[/* state */2][/* name */2];
-                            var reduce = param[/* reduce */1];
-                            MutationDeleteAlias$ReactTemplate.run(name).then((function (result) {
-                                    if (result[0] >= 981919598) {
-                                      Curry._2(reduce, (function () {
-                                              return /* Saved */5;
-                                            }), /* () */0);
-                                    } else {
-                                      handleExn("Failed deleting alias", Alias$ReactTemplate.name(alias), result[1], reduce);
-                                    }
-                                    return Promise.resolve(/* () */0);
-                                  }));
-                            return /* () */0;
-                          })
-                      ]);
           case 5 : 
-              return /* UpdateWithSideEffects */Block.__(3, [
-                        /* record */[
-                          /* mode */state[/* mode */0],
-                          /* saving : No */0,
-                          /* name */state[/* name */2],
-                          /* status */state[/* status */3],
-                          /* error */state[/* error */4]
-                        ],
-                        (function () {
-                            return Curry._1(onChange, /* () */0);
-                          })
-                      ]);
+              if (currentlySaving !== 0) {
+                return /* UpdateWithSideEffects */Block.__(3, [
+                          /* record */[
+                            /* mode */state[/* mode */0],
+                            /* saving : No */0,
+                            /* name */state[/* name */2],
+                            /* status */state[/* status */3],
+                            /* error */state[/* error */4]
+                          ],
+                          (function () {
+                              return Curry._1(onChange, /* () */0);
+                            })
+                        ]);
+              } else {
+                return /* NoUpdate */0;
+              }
           case 6 : 
-              return /* UpdateWithSideEffects */Block.__(3, [
-                        /* record */[
-                          /* mode */state[/* mode */0],
-                          /* saving : No */0,
-                          /* name */Alias$ReactTemplate.name(alias),
-                          /* status : Disabled */-709493348,
-                          /* error */state[/* error */4]
-                        ],
-                        (function () {
-                            return Curry._1(onChange, /* () */0);
-                          })
-                      ]);
+              if (currentlySaving !== 0) {
+                return /* UpdateWithSideEffects */Block.__(3, [
+                          /* record */[
+                            /* mode */state[/* mode */0],
+                            /* saving : No */0,
+                            /* name */Alias$ReactTemplate.name(alias),
+                            /* status : Disabled */-709493348,
+                            /* error */state[/* error */4]
+                          ],
+                          (function () {
+                              return Curry._1(onChange, /* () */0);
+                            })
+                        ]);
+              } else {
+                return /* NoUpdate */0;
+              }
           case 7 : 
               return /* NoUpdate */0;
           
@@ -346,6 +378,8 @@ function make(alias, onChange, _) {
                     /* status */Alias$ReactTemplate.status(alias),
                     /* error */action[0]
                   ]]);
+      } else if (currentlySaving !== 0) {
+        return /* NoUpdate */0;
       } else {
         return /* Update */Block.__(0, [/* record */[
                     /* mode */state[/* mode */0],

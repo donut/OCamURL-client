@@ -73,7 +73,7 @@ function handleExn(failedAction, id, exn, reduce) {
 
 var component = ReasonReact.reducerComponent("AliasWidget");
 
-function make(alias, _) {
+function make(alias, onChange, _) {
   var handleHeaderClick = function () {
     return /* EnterRenameMode */0;
   };
@@ -302,13 +302,18 @@ function make(alias, _) {
                           })
                       ]);
           case 5 : 
-              return /* Update */Block.__(0, [/* record */[
+              return /* UpdateWithSideEffects */Block.__(3, [
+                        /* record */[
                           /* mode */state[/* mode */0],
                           /* saving : No */0,
                           /* name */state[/* name */2],
                           /* status */state[/* status */3],
                           /* error */state[/* error */4]
-                        ]]);
+                        ],
+                        (function () {
+                            return Curry._1(onChange, /* () */0);
+                          })
+                      ]);
           case 6 : 
               return /* NoUpdate */0;
           

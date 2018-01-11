@@ -53,7 +53,7 @@ let handleExn = (failedAction, ~id, ~exn, ~reduce) => switch exn {
 
 let component = ReasonReact.reducerComponent("AliasWidget");
 
-let make = (~alias, _children) => {
+let make = (~alias, ~onChange, _children) => {
   let handleHeaderClick = (_event) => EnterRenameMode;
 
   let handleChange = (event) => {
@@ -186,7 +186,10 @@ let make = (~alias, _children) => {
           ({ state: { name }, reduce }) => deleteAlias(name, reduce)
         )
       | Saved =>
-        ReasonReact.Update({...state, saving: No})
+        ReasonReact.UpdateWithSideEffects(
+          {...state, saving: No},
+          (_self) => onChange()
+        )
       | Error(error) => 
         ReasonReact.Update({...state, saving: Error, error})
       | Nevermind =>  

@@ -20,6 +20,10 @@ var apolloClient = ReasonApollo.createApolloClient(InMemoryCache[/* cache */0], 
 
 var Client = ReasonApollo.CreateClient(/* module */[/* apolloClient */apolloClient]);
 
+function resetStore() {
+  return Client[/* apolloClient */0].resetStore();
+}
+
 var ResponseError = Caml_exceptions.create("Apollo-ReactTemplate.ResponseError");
 
 function queryStringOfRequest(param) {
@@ -111,6 +115,7 @@ function Request(RequestConfig) {
 exports.HTTPLink             = HTTPLink;
 exports.InMemoryCache        = InMemoryCache;
 exports.Client               = Client;
+exports.resetStore           = resetStore;
 exports.ResponseError        = ResponseError;
 exports.queryStringOfRequest = queryStringOfRequest;
 exports.Request              = Request;

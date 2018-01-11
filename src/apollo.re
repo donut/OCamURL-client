@@ -25,8 +25,15 @@ module Client = ReasonApollo.CreateClient({
     ~cache=InMemoryCache.cache,
     ~link=ApolloLinks.from([|HTTPLink.link|]),
     ()
-  );
+);
+
 });
+
+[@bs.send] external resetStoreOfClient
+  : (ApolloClient.generatedApolloClient) => Js.Promise.t(unit)
+  = "resetStore";
+
+let resetStore = () => resetStoreOfClient(Client.apolloClient);
 
 exception ResponseError(string, string);
 

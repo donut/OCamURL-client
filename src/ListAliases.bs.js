@@ -19,44 +19,49 @@ function str(prim) {
 var component = ReasonReact.reducerComponent("QueryAliases");
 
 function make(url, _) {
+  var loadList = function (url, reduce) {
+    console.log("Loading aliases of", url);
+    QueryAliases$ReactTemplate.run(url).then((function (result) {
+            if (result[0] >= 981919598) {
+              var lst = result[1].map(Alias$ReactTemplate.ofGql);
+              Curry._2(reduce, (function () {
+                      return /* Loaded */Block.__(1, [lst]);
+                    }), /* () */0);
+            } else {
+              var exn = result[1];
+              if (exn[0] === Apollo$ReactTemplate.ResponseError) {
+                var message = exn[2];
+                Curry._2(reduce, (function () {
+                        return /* Error */Block.__(0, ["Failed loading: " + message]);
+                      }), /* () */0);
+              } else {
+                console.log("Failed loading alias list for URL.", url, exn);
+                Curry._2(reduce, (function () {
+                        return /* Error */Block.__(0, ["Failed loading alias list. See console."]);
+                      }), /* () */0);
+              }
+            }
+            return Promise.resolve(/* () */0);
+          }));
+    return /* () */0;
+  };
   var newrecord = component.slice();
   newrecord[/* didMount */4] = (function () {
       return /* SideEffects */Block.__(2, [(function (param) {
-                    var url$1 = url;
-                    var reduce = param[/* reduce */1];
-                    QueryAliases$ReactTemplate.run(url$1).then((function (result) {
-                            if (result[0] >= 981919598) {
-                              var lst = result[1].map(Alias$ReactTemplate.ofGql);
-                              Curry._2(reduce, (function () {
-                                      return /* Loaded */Block.__(1, [lst]);
-                                    }), /* () */0);
-                            } else {
-                              var exn = result[1];
-                              if (exn[0] === Apollo$ReactTemplate.ResponseError) {
-                                var message = exn[2];
-                                Curry._2(reduce, (function () {
-                                        return /* Error */Block.__(0, ["Failed loading: " + message]);
-                                      }), /* () */0);
-                              } else {
-                                console.log("Failed loading alias list for URL.", url$1, exn);
-                                Curry._2(reduce, (function () {
-                                        return /* Error */Block.__(0, ["Failed loading alias list. See console."]);
-                                      }), /* () */0);
-                              }
-                            }
-                            return Promise.resolve(/* () */0);
-                          }));
-                    return /* () */0;
+                    return loadList(url, param[/* reduce */1]);
                   })]);
     });
   newrecord[/* render */9] = (function (param) {
       var match = param[/* state */2];
       var list = match[/* list */1];
       var status = match[/* status */0];
+      var reduce = param[/* reduce */1];
       var body = typeof status === "number" ? (
           status !== 0 ? (
               list.length !== 0 ? $$Array.map((function (a) {
-                        return ReasonReact.element(/* Some */[Pervasives.string_of_int(Alias$ReactTemplate.id(a))], /* None */0, AliasWidget$ReactTemplate.make(a, /* array */[]));
+                        return ReasonReact.element(/* Some */[Pervasives.string_of_int(Alias$ReactTemplate.id(a))], /* None */0, AliasWidget$ReactTemplate.make(a, Curry._1(reduce, (function () {
+                                              return /* AliasChange */0;
+                                            })), /* array */[]));
                       }), list) : React.createElement("p", {
                       className: "status empty"
                     }, "No aliases.")
@@ -77,7 +82,23 @@ function make(url, _) {
             ];
     });
   newrecord[/* reducer */12] = (function (action, _) {
-      if (action.tag) {
+      if (typeof action === "number") {
+        return /* SideEffects */Block.__(2, [(function (param) {
+                      var url$1 = url;
+                      var reduce = param[/* reduce */1];
+                      Apollo$ReactTemplate.resetStore(/* () */0).then((function () {
+                                loadList(url$1, reduce);
+                                return Promise.resolve(/* () */0);
+                              })).catch((function (error) {
+                              console.log("Failed reloading list.", url$1, error);
+                              Curry._2(reduce, (function () {
+                                      return /* Error */Block.__(0, ["Failed reloading list. See console."]);
+                                    }), /* () */0);
+                              return Promise.resolve(/* () */0);
+                            }));
+                      return /* () */0;
+                    })]);
+      } else if (action.tag) {
         return /* Update */Block.__(0, [/* record */[
                     /* status : Success */1,
                     /* list */action[0]

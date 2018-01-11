@@ -2,12 +2,23 @@
 'use strict';
 
 var Curry               = require("bs-platform/lib/js/curry.js");
-var ApolloClient        = require("reason-apollo/src/ApolloClient.js");
-var ReasonApollo        = require("reason-apollo/src/ReasonApollo.js");
+var ApolloLinks         = require("reason-apollo/src/ApolloLinks.bs.js");
+var ApolloLink          = require("apollo-link");
+var ApolloClient        = require("reason-apollo/src/ApolloClient.bs.js");
+var ReasonApollo        = require("reason-apollo/src/ReasonApollo.bs.js");
 var Caml_exceptions     = require("bs-platform/lib/js/caml_exceptions.js");
+var ApolloInMemoryCache = require("reason-apollo/src/ApolloInMemoryCache.bs.js");
 var JsOpt$ReactTemplate = require("./JsOpt.bs.js");
 
-var Client = ReasonApollo.Create(/* module */[/* uri */"http://mgmt.ocamurl.dev/graphql"]);
+var HTTPLink = ApolloLinks.CreateHttpLink(/* module */[/* uri */"http://mgmt.ocamurl.dev/graphql"]);
+
+var inMemoryCacheObject = undefined;
+
+var InMemoryCache = ApolloInMemoryCache.CreateInMemoryCache(/* module */[/* inMemoryCacheObject */inMemoryCacheObject]);
+
+var apolloClient = ReasonApollo.createApolloClient(InMemoryCache[/* cache */0], ApolloLink.from(/* array */[HTTPLink[/* link */0]]), /* None */0, /* None */0, /* None */0, /* None */0, /* () */0);
+
+var Client = ReasonApollo.CreateClient(/* module */[/* apolloClient */apolloClient]);
 
 var ResponseError = Caml_exceptions.create("Apollo-ReactTemplate.ResponseError");
 
@@ -17,7 +28,7 @@ function queryStringOfRequest(param) {
 
 function Request(RequestConfig) {
   var CastApolloClient = ApolloClient.Cast(/* module */[]);
-  var apolloClient = Client[/* apolloClient */2];
+  var apolloClient = Client[/* apolloClient */0];
   var SendFailure = Caml_exceptions.create("Apollo-ReactTemplate.Request(RequestConfig).SendFailure");
   var send = function (variables) {
     return new Promise((function (resolve, _) {
@@ -97,8 +108,10 @@ function Request(RequestConfig) {
         ];
 }
 
+exports.HTTPLink             = HTTPLink;
+exports.InMemoryCache        = InMemoryCache;
 exports.Client               = Client;
 exports.ResponseError        = ResponseError;
 exports.queryStringOfRequest = queryStringOfRequest;
 exports.Request              = Request;
-/* Client Not a pure module */
+/* HTTPLink Not a pure module */

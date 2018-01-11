@@ -1,6 +1,31 @@
 
-module Client = ReasonApollo.Create({
+module HTTPLink = ApolloLinks.CreateHttpLink({
   let uri = "http://mgmt.ocamurl.dev/graphql";
+});
+
+/* This should be a good start for HTTP Basic auth */
+/* module AuthLink = CreateContextLink({
+  let contextHandler = () => {
+    let headers = {
+      "headers": {
+        "authorization": {j|Auth magic here|j}
+      }
+    };
+    headers
+  };
+}); */
+
+module InMemoryCache = ApolloInMemoryCache.CreateInMemoryCache({
+  type dataObject;
+  let inMemoryCacheObject = Js.Nullable.undefined;
+});
+
+module Client = ReasonApollo.CreateClient({
+  let apolloClient = ReasonApollo.createApolloClient(
+    ~cache=InMemoryCache.cache,
+    ~link=ApolloLinks.from([|HTTPLink.link|]),
+    ()
+  );
 });
 
 exception ResponseError(string, string);

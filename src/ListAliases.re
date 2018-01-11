@@ -91,11 +91,28 @@ let make = (~url, _children) => {
         | [||] =>
           <p className="status empty"> (str("No aliases.")) </p>
         | lst => 
-          ReasonReact.arrayToElement(lst |> Array.map((a) => {
+          let (enabled, disabled) =
+            lst |> Array.to_list
+                |> List.partition((a) => Alias.status(a) == `Enabled);
+          let elementOfAlias = (a) => {
             <AliasWidget key=(Alias.id(a) |> string_of_int)
                          alias=a
                          onChange=(reduce((_) => AliasChange)) />
-          }))
+          };
+          let elementsOfAliases = (lst) =>
+            lst |> Array.of_list |> Array.map(elementOfAlias)
+                |> ReasonReact.arrayToElement;
+
+          <div>
+            <div className="enabled">
+              <h2>(str("Enabled"))</h2>
+              (enabled |> elementsOfAliases)
+            </div>
+            <div className="disabled">
+              <h2>(str("Disabled"))</h2>
+              (disabled |> elementsOfAliases)
+            </div>
+          </div>
         }
       };
       

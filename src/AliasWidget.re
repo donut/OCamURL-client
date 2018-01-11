@@ -40,6 +40,7 @@ type action =
   | Disable
   | Delete
   | Saved
+  | DisabledAndAdded
   | Error(string)
   | Nevermind;
 
@@ -76,8 +77,10 @@ let make = (~alias, ~onChange, _children) => {
         | `Exn(exn) =>
           handleExn("Failed renaming alias", ~id=Alias.name(alias),
                     ~exn, ~reduce)
-        | `Payload(_) => 
-          reduce((_self) => Saved)()
+        | `Payload(p) => switch (String.lowercase(p##actionTaken)) {
+          | "disable_and_add" => reduce((_self) => DisabledAndAdded)()
+          | _ => reduce((_self) => Saved)()
+          };
         };
         resolve()
       })
@@ -188,6 +191,11 @@ let make = (~alias, ~onChange, _children) => {
       | Saved =>
         ReasonReact.UpdateWithSideEffects(
           {...state, saving: No},
+          (_self) => onChange()
+        )
+      | DisabledAndAdded =>
+        ReasonReact.UpdateWithSideEffects(
+          {...state, name: Alias.name(alias), status: `Disabled, saving: No},
           (_self) => onChange()
         )
       | Error(message) => 

@@ -9,25 +9,24 @@ let mutation = [@bs] gql({|
   }
 |});
 
-type input = {.
-  "clientMutationId": string,
-  "name": string,
-  "newName": string,
-  "disableAndAddIfUsed": Js.boolean
-};
-
-type payload' = {.
-  "actionTaken": string,
-  "clientMutationId": string
-};
-
-type payloadOrError = {.
-  "error": Js.Nullable.t(Apollo.error),
-  "payload": Js.Nullable.t(payload')
-};
 
 module Config = {
-  type payload = payload';
+  type input = {.
+    "clientMutationId": string,
+    "name": string,
+    "newName": string,
+    "disableAndAddIfUsed": Js.boolean
+  };
+
+  type payload = {.
+    "actionTaken": string
+  };
+
+  type payloadOrError = {.
+    "error": Js.Nullable.t(Apollo.error),
+    "payload": Js.Nullable.t(payload)
+  };
+
   type response = {. "renameAlias": payloadOrError };
   type variables = {. "input": input };
   let request = `Mutation(mutation);

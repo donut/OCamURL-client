@@ -102,7 +102,7 @@ function make(alias, onChange, _) {
                           if (match === "enter") {
                             return action;
                           } else {
-                            return /* Nevermind */6;
+                            return /* Nevermind */7;
                           }
                         })),
                   onBlur: Curry._1(reduce, (function () {
@@ -204,9 +204,16 @@ function make(alias, onChange, _) {
                               var reduce = param[/* reduce */1];
                               MutateAliasName$ReactTemplate.run(Alias$ReactTemplate.name(alias), name).then((function (result) {
                                       if (result[0] >= 981919598) {
-                                        Curry._2(reduce, (function () {
-                                                return /* Saved */5;
-                                              }), /* () */0);
+                                        var match = $$String.lowercase(result[1].actionTaken);
+                                        if (match === "disable_and_add") {
+                                          Curry._2(reduce, (function () {
+                                                  return /* DisabledAndAdded */6;
+                                                }), /* () */0);
+                                        } else {
+                                          Curry._2(reduce, (function () {
+                                                  return /* Saved */5;
+                                                }), /* () */0);
+                                        }
                                       } else {
                                         handleExn("Failed renaming alias", Alias$ReactTemplate.name(alias), result[1], reduce);
                                       }
@@ -315,6 +322,19 @@ function make(alias, onChange, _) {
                           })
                       ]);
           case 6 : 
+              return /* UpdateWithSideEffects */Block.__(3, [
+                        /* record */[
+                          /* mode */state[/* mode */0],
+                          /* saving : No */0,
+                          /* name */Alias$ReactTemplate.name(alias),
+                          /* status : Disabled */-709493348,
+                          /* error */state[/* error */4]
+                        ],
+                        (function () {
+                            return Curry._1(onChange, /* () */0);
+                          })
+                      ]);
+          case 7 : 
               return /* NoUpdate */0;
           
         }

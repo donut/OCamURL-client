@@ -1,6 +1,6 @@
 
 module HTTPLink = ApolloLinks.CreateHttpLink({
-  let uri = "http://mgmt.ocamurl.dev/graphql";
+  let uri = "http://mgmt.ocamurl.d3v/graphql";
 });
 
 /* This should be a good start for HTTP Basic auth */
@@ -25,15 +25,16 @@ module Client = ReasonApollo.CreateClient({
     ~cache=InMemoryCache.cache,
     ~link=ApolloLinks.from([|HTTPLink.link|]),
     ()
-);
-
+  );
 });
+
 
 [@bs.send] external resetStoreOfClient
   : (ApolloClient.generatedApolloClient) => Js.Promise.t(unit)
   = "resetStore";
 
 let resetStore = () => resetStoreOfClient(Client.apolloClient);
+
 
 exception ResponseError(string, string);
 
@@ -122,4 +123,15 @@ module Request = (RequestConfig: RequestConfig) => {
     })
   };
 
+};
+
+let messageOfExn = (failedAction, ~id, ~exn) => {
+  let prefix = "Failed " ++ failedAction;
+  switch exn {
+  | ResponseError(_code, message) => 
+    prefix ++ ": " ++ message
+  | exn => 
+    Js.log3(prefix, id, exn);
+    prefix ++ ". See console."
+  }
 };

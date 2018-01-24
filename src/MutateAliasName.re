@@ -9,7 +9,6 @@ let mutation = [@bs] gql({|
   }
 |});
 
-
 module Config = {
   type input = {.
     "clientMutationId": string,

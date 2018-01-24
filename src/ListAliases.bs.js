@@ -19,7 +19,7 @@ function str(prim) {
 
 var component = ReasonReact.reducerComponent("QueryAliases");
 
-function make(url, _) {
+function make(url, _, _$1, _$2) {
   var loadList = function (url, reduce) {
     console.log("Loading aliases of", url);
     QueryAliases$ReactTemplate.run(url).then((function (result) {

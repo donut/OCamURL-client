@@ -18,7 +18,7 @@ type state = {
 
 let component = ReasonReact.reducerComponent("QueryAliases");
 
-let make = (~url, _children) => {
+let make = (~url, ~state, ~dispatch, _children) => {
 
   let loadList = (url, reduce) => {
     Js.log2("Loading aliases of", url);

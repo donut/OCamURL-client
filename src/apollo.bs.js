@@ -10,7 +10,7 @@ var Caml_exceptions     = require("bs-platform/lib/js/caml_exceptions.js");
 var ApolloInMemoryCache = require("reason-apollo/src/ApolloInMemoryCache.bs.js");
 var JsOpt$ReactTemplate = require("./JsOpt.bs.js");
 
-var HTTPLink = ApolloLinks.CreateHttpLink(/* module */[/* uri */"http://mgmt.ocamurl.dev/graphql"]);
+var HTTPLink = ApolloLinks.CreateHttpLink(/* module */[/* uri */"http://mgmt.ocamurl.d3v/graphql"]);
 
 var inMemoryCacheObject = undefined;
 
@@ -112,6 +112,16 @@ function Request(RequestConfig) {
         ];
 }
 
+function messageOfExn(failedAction, id, exn) {
+  var prefix = "Failed " + failedAction;
+  if (exn[0] === ResponseError) {
+    return prefix + (": " + exn[2]);
+  } else {
+    console.log(prefix, id, exn);
+    return prefix + ". See console.";
+  }
+}
+
 exports.HTTPLink             = HTTPLink;
 exports.InMemoryCache        = InMemoryCache;
 exports.Client               = Client;
@@ -119,4 +129,5 @@ exports.resetStore           = resetStore;
 exports.ResponseError        = ResponseError;
 exports.queryStringOfRequest = queryStringOfRequest;
 exports.Request              = Request;
+exports.messageOfExn         = messageOfExn;
 /* HTTPLink Not a pure module */

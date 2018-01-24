@@ -6,7 +6,8 @@
   "name": "react-template",
   "reason": {"react-jsx" : 2},
   "sources": [
-    "src"
+    "src",
+    "src/Store"
   ],
   "package-specs": [{
     "module": "commonjs",
@@ -17,7 +18,8 @@
   "bs-dependencies": [
     "bs-webapi",
     "reason-react",
-    "reason-apollo"
+    "reason-apollo",
+    "reductive"
   ],
   "bsc-flags": [
     "-bs-super-errors"

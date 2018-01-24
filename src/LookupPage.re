@@ -13,7 +13,7 @@ type action =
 
 let component = ReasonReact.reducerComponent("LookupPage");
 
-let make = (_children) => {
+let make = (~state: State.t, ~dispatch, _children) => {
   let onURLInputSubmit = (url) => InputURLChange(url);
 
   {
@@ -45,7 +45,10 @@ let make = (_children) => {
             (str({j|That doesn't look like a valid URL: $reason|j}))
           </p>
         | `Valid(url) =>
-          <ListAliases url />
+          <div>
+            <GenerateAliasButton url state />
+            <ListAliases url state dispatch />
+          </div>
       };
 
       <section>

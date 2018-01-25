@@ -21,6 +21,8 @@ let make = (~url, ~aliasList: State.aliasList, _children) => {
 
     willReceiveProps: ({ state }) => {
       switch (aliasList, state.firstLoad) {
+      | (`Unloaded, _) =>
+        QueryAliases.run(~url)
       | (`Loaded([], `Fresh), true) =>
         MutationGenerateAlias.run(~id="alias-list", ~url)
       | (`Loaded(_lst, `Stale), _) =>
@@ -29,14 +31,15 @@ let make = (~url, ~aliasList: State.aliasList, _children) => {
       };
 
       switch (aliasList) {
+      | `Unloaded     => { firstLoad: true  }
       | `Loaded(_, _) => { firstLoad: false }
-      | _ => state
+      |             _ => state
       }
     },
 
     render: (_self) => {
       let body = switch (aliasList) {
-      | `Loading => 
+      | `Unloaded | `Loading => 
         <p className="status loading"> (str("Loading...")) </p>
       | `Failed(message) =>
         <p className="status failure"> (str(message)) </p>

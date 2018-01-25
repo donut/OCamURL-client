@@ -2,7 +2,7 @@
 let reducer = (state: State.t, action) => switch (action) {
   |  Action.SetLookupURL(lookupURL) =>
     let aliasList = 
-      (lookupURL == state.lookupURL) ? state.aliasList : `Loading;
+      (lookupURL == state.lookupURL) ? state.aliasList : `Unloaded;
     { ...state, lookupURL, aliasList }
 
   | Action.AliasListLoading =>

@@ -11,7 +11,7 @@ function reducer(state, action) {
   if (action[0] === Action$ReactTemplate.SetLookupURL) {
     var lookupURL = action[1];
     var match = Caml_obj.caml_equal(lookupURL, state[/* lookupURL */3]);
-    var aliasList = match !== 0 ? state[/* aliasList */1] : /* Loading */-700189092;
+    var aliasList = match !== 0 ? state[/* aliasList */1] : /* Unloaded */879244094;
     return /* record */[
             /* aliasStatuses */state[/* aliasStatuses */0],
             /* aliasList */aliasList,

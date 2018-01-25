@@ -22,28 +22,36 @@ function make(url, aliasList, _) {
   newrecord[/* willReceiveProps */3] = (function (param) {
       var state = param[/* state */2];
       var match = state[/* firstLoad */0];
-      if (typeof aliasList !== "number") {
-        if (aliasList[0] === 218348581) {
-          var match$1 = aliasList[1];
-          var exit = 0;
-          if (match$1[0]) {
-            exit = 1;
-          } else if (match$1[1] !== 431224398) {
-            exit = 1;
-          } else if (match !== 0) {
-            MutationGenerateAlias$ReactTemplate.run("alias-list", url);
-          }
-          if (exit === 1) {
-            if (match$1[1] === 389603065) {
-              QueryAliases$ReactTemplate.reload(url);
-            }
-            
+      if (typeof aliasList === "number") {
+        if (aliasList === 879244094) {
+          QueryAliases$ReactTemplate.run(url);
+        }
+        
+      } else if (aliasList[0] === 218348581) {
+        var match$1 = aliasList[1];
+        var exit = 0;
+        if (match$1[0]) {
+          exit = 1;
+        } else if (match$1[1] !== 431224398) {
+          exit = 1;
+        } else if (match !== 0) {
+          MutationGenerateAlias$ReactTemplate.run("alias-list", url);
+        }
+        if (exit === 1) {
+          if (match$1[1] === 389603065) {
+            QueryAliases$ReactTemplate.reload(url);
           }
           
         }
         
       }
-      if (typeof aliasList === "number" || aliasList[0] !== 218348581) {
+      if (typeof aliasList === "number") {
+        if (aliasList !== 879244094) {
+          return state;
+        } else {
+          return /* record */[/* firstLoad : true */1];
+        }
+      } else if (aliasList[0] !== 218348581) {
         return state;
       } else {
         return /* record */[/* firstLoad : false */0];

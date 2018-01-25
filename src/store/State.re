@@ -20,7 +20,8 @@ type aliasListStatus =
   | `Reloading ];
 
 type aliasList = 
-  [ `Loading
+  [ `Unloaded
+  | `Loading
   | `Failed(string)
   | `Loaded(list(Alias.t), aliasListStatus) ];
 
@@ -45,7 +46,7 @@ let lookupInitialValue = {
 
 let initial = {
   aliasStatuses: Js.Dict.empty(),
-  aliasList: `Loading,
+  aliasList: `Unloaded,
   lookupInitialValue,
   lookupURL: `Unset,
   messages: []

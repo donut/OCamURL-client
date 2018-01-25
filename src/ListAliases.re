@@ -18,7 +18,7 @@ type state = {
 
 let component = ReasonReact.reducerComponent("QueryAliases");
 
-let make = (~url, ~state, ~dispatch, _children) => {
+let make = (~url, ~state as appState: State.t, _children) => {
 
   let loadList = (url, reduce) => {
     Js.log2("Loading aliases of", url);
@@ -35,6 +35,7 @@ let make = (~url, ~state, ~dispatch, _children) => {
         }
       | `Payload(payload) => 
         let lst = payload |> Js.Array.map((a) => Alias.ofGql(a)); 
+        Store.dispatch(Action.ListIsFresh);
         reduce((_self) => Loaded(lst))()
       };
       resolve()
@@ -79,6 +80,13 @@ let make = (~url, ~state, ~dispatch, _children) => {
 
     didMount: (_state) => {
       ReasonReact.SideEffects(({ reduce }) => loadList(url, reduce))
+    },
+
+    willReceiveProps: ({ state, reduce }) => {
+      if (appState.listIsStale) {
+        reloadList(url, reduce)
+      };
+      state
     },
 
     render: ({ state: { status, list }, reduce }) => {

@@ -1,13 +1,18 @@
 
 
 let reducer = (state: State.t, action) => switch (action) {
+  |  Action.SetLookupURL(lookupURL) => { ...state, lookupURL }
+
+  | Action.ListIsFresh => { ...state, listIsStale: false }
+  | Action.ListIsStale => { ...state, listIsStale: true  }
+
   | Action.GeneratingAlias(id) =>
     let aliasStatuses = State.setAliasStatus(state, id, `Saving);
     { ...state, aliasStatuses }
 
   | Action.GeneratedAlias(id, name) => 
     let aliasStatuses = State.setAliasStatus(state, id, `Saved);
-    { aliasStatuses, dataIsStale: true,
+    { ...state, aliasStatuses, listIsStale: true,
       messages: [(`Info, "Generated alias " ++ name ++ ".")] }
 
   | Action.GeneratingAliasFailed(id, message) =>

@@ -9,15 +9,35 @@ type messageType =
   | `Error
   | `Warning ];
 
+type lookupURLStatus =
+  [ `Valid(Url.t)
+  | `Invalid(string)
+  | `Unset ];
+
 type t = {
   aliasStatuses: Js.Dict.t(saveStatus),
-  dataIsStale: bool,
+  listIsStale: bool,
+  lookupInitialValue: string,
+  lookupURL: lookupURLStatus,
   messages: list((messageType, string))
+};
+
+let lookupInitialValue = {
+  let urlInQuery =
+    DomRe.location |> LocationRe.search
+    |> Url.Params.ofString |> Url.Params.toList |> List.rev
+    |> List.find_all((p:Url.Params.pair) => String.lowercase(p.key) == "url");
+  switch (urlInQuery) {
+    | [] => ""
+    | [last, ..._] => switch (last.value) { | Some(u) => u | None => "" }
+  }
 };
 
 let initial = {
   aliasStatuses: Js.Dict.empty(),
-  dataIsStale: false,
+  listIsStale: false,
+  lookupInitialValue,
+  lookupURL: `Unset,
   messages: []
 };
 

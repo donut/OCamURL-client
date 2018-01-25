@@ -9,6 +9,8 @@ var React                      = require("react");
 var Pervasives                 = require("bs-platform/lib/js/pervasives.js");
 var ReasonReact                = require("reason-react/src/ReasonReact.js");
 var Alias$ReactTemplate        = require("./alias.bs.js");
+var Store$ReactTemplate        = require("./Store/Store.bs.js");
+var Action$ReactTemplate       = require("./Store/Action.bs.js");
 var Apollo$ReactTemplate       = require("./apollo.bs.js");
 var AliasWidget$ReactTemplate  = require("./AliasWidget.bs.js");
 var QueryAliases$ReactTemplate = require("./QueryAliases.bs.js");
@@ -19,12 +21,13 @@ function str(prim) {
 
 var component = ReasonReact.reducerComponent("QueryAliases");
 
-function make(url, _, _$1, _$2) {
+function make(url, appState, _) {
   var loadList = function (url, reduce) {
     console.log("Loading aliases of", url);
     QueryAliases$ReactTemplate.run(url).then((function (result) {
             if (result[0] >= 981919598) {
               var lst = result[1].map(Alias$ReactTemplate.ofGql);
+              Store$ReactTemplate.dispatch(Action$ReactTemplate.ListIsFresh);
               Curry._2(reduce, (function () {
                       return /* Loaded */Block.__(1, [lst]);
                     }), /* () */0);
@@ -46,7 +49,26 @@ function make(url, _, _$1, _$2) {
           }));
     return /* () */0;
   };
+  var reloadList = function (url, reduce) {
+    Apollo$ReactTemplate.resetStore(/* () */0).then((function () {
+              loadList(url, reduce);
+              return Promise.resolve(/* () */0);
+            })).catch((function (error) {
+            console.log("Failed reloading list.", url, error);
+            Curry._2(reduce, (function () {
+                    return /* Error */Block.__(0, ["Failed reloading list. See console."]);
+                  }), /* () */0);
+            return Promise.resolve(/* () */0);
+          }));
+    return /* () */0;
+  };
   var newrecord = component.slice();
+  newrecord[/* willReceiveProps */3] = (function (param) {
+      if (appState[/* listIsStale */1]) {
+        reloadList(url, param[/* reduce */1]);
+      }
+      return param[/* state */2];
+    });
   newrecord[/* didMount */4] = (function () {
       return /* SideEffects */Block.__(2, [(function (param) {
                     return loadList(url, param[/* reduce */1]);
@@ -102,19 +124,7 @@ function make(url, _, _$1, _$2) {
   newrecord[/* reducer */12] = (function (action, _) {
       if (typeof action === "number") {
         return /* SideEffects */Block.__(2, [(function (param) {
-                      var url$1 = url;
-                      var reduce = param[/* reduce */1];
-                      Apollo$ReactTemplate.resetStore(/* () */0).then((function () {
-                                loadList(url$1, reduce);
-                                return Promise.resolve(/* () */0);
-                              })).catch((function (error) {
-                              console.log("Failed reloading list.", url$1, error);
-                              Curry._2(reduce, (function () {
-                                      return /* Error */Block.__(0, ["Failed reloading list. See console."]);
-                                    }), /* () */0);
-                              return Promise.resolve(/* () */0);
-                            }));
-                      return /* () */0;
+                      return reloadList(url, param[/* reduce */1]);
                     })]);
       } else if (action.tag) {
         return /* Update */Block.__(0, [/* record */[

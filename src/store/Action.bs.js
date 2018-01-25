@@ -3,6 +3,12 @@
 
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 
+var SetLookupURL = Caml_exceptions.create("Action-ReactTemplate.SetLookupURL");
+
+var ListIsFresh = Caml_exceptions.create("Action-ReactTemplate.ListIsFresh");
+
+var ListIsStale = Caml_exceptions.create("Action-ReactTemplate.ListIsStale");
+
 var GeneratingAlias = Caml_exceptions.create("Action-ReactTemplate.GeneratingAlias");
 
 var GeneratedAlias = Caml_exceptions.create("Action-ReactTemplate.GeneratedAlias");
@@ -11,6 +17,9 @@ var GeneratingAliasFailed = Caml_exceptions.create("Action-ReactTemplate.Generat
 
 var ReplaceState = Caml_exceptions.create("Action-ReactTemplate.ReplaceState");
 
+exports.SetLookupURL          = SetLookupURL;
+exports.ListIsFresh           = ListIsFresh;
+exports.ListIsStale           = ListIsStale;
 exports.GeneratingAlias       = GeneratingAlias;
 exports.GeneratedAlias        = GeneratedAlias;
 exports.GeneratingAliasFailed = GeneratingAliasFailed;

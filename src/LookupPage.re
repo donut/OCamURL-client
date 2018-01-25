@@ -1,44 +1,13 @@
 let str = ReasonReact.stringToElement;
 
-let optDefault = (default) => fun
-  | None => default
-  | Some(x) => x;
+let component = ReasonReact.statelessComponent("LookupPage");
 
-type state = {
-  input: LookupInput.status
-};
-
-type action =
-  | InputURLChange(LookupInput.status);
-
-let component = ReasonReact.reducerComponent("LookupPage");
-
-let make = (~state: State.t, ~dispatch, _children) => {
-  let onURLInputSubmit = (url) => InputURLChange(url);
-
+let make = (~state: State.t, ~dispatch as _, _children) => {
   {
     ...component,
 
-    initialState: () => {
-      { input: `Unset }
-    },
-
-    reducer: (action, state) => switch action {
-      | InputURLChange(input) => ReasonReact.Update({...state, input})
-    },
-
-    render: ({ state: { input }, reduce }) => {
-      let urlInQuery =
-        DomRe.location |> LocationRe.search
-        |> Url.Params.ofString |> Url.Params.toList |> List.rev
-        |> List.find_all(
-            (p:Url.Params.pair) => String.lowercase(p.key) == "url");
-      let initialValue = switch urlInQuery {
-          | [] => ""
-          | [last, ..._] => optDefault("", last.value)
-          };
-
-      let details = switch input {
+    render: (_self) => {
+      let details = switch (state.lookupURL) {
         | `Unset => ReasonReact.nullElement 
         | `Invalid(reason) => 
           <p className="error invalid-input">
@@ -47,14 +16,15 @@ let make = (~state: State.t, ~dispatch, _children) => {
         | `Valid(url) =>
           <div>
             <GenerateAliasButton url state />
-            <ListAliases url state dispatch />
+            <ListAliases url state />
           </div>
       };
 
       <section>
         <h1> (str("OCamURL")) </h1>
         <p> (str("Enter a URL or alias below.")) </p>
-        <LookupInput initialValue onSubmit=(reduce(onURLInputSubmit)) />
+        <LookupInput initialValue=(state.lookupInitialValue)
+                     onSubmit=((u) => Store.dispatch(Action.SetLookupURL(u))) />
         (details)
       </section>
     }

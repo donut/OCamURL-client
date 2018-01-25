@@ -7,18 +7,46 @@ var Action$ReactTemplate          = require("./Action.bs.js");
 var StoreMiddleware$ReactTemplate = require("./StoreMiddleware.bs.js");
 
 function reducer(state, action) {
-  if (action[0] === Action$ReactTemplate.GeneratingAlias) {
+  if (action[0] === Action$ReactTemplate.SetLookupURL) {
+    return /* record */[
+            /* aliasStatuses */state[/* aliasStatuses */0],
+            /* listIsStale */state[/* listIsStale */1],
+            /* lookupInitialValue */state[/* lookupInitialValue */2],
+            /* lookupURL */action[1],
+            /* messages */state[/* messages */4]
+          ];
+  } else if (action === Action$ReactTemplate.ListIsFresh) {
+    return /* record */[
+            /* aliasStatuses */state[/* aliasStatuses */0],
+            /* listIsStale : false */0,
+            /* lookupInitialValue */state[/* lookupInitialValue */2],
+            /* lookupURL */state[/* lookupURL */3],
+            /* messages */state[/* messages */4]
+          ];
+  } else if (action === Action$ReactTemplate.ListIsStale) {
+    return /* record */[
+            /* aliasStatuses */state[/* aliasStatuses */0],
+            /* listIsStale : true */1,
+            /* lookupInitialValue */state[/* lookupInitialValue */2],
+            /* lookupURL */state[/* lookupURL */3],
+            /* messages */state[/* messages */4]
+          ];
+  } else if (action[0] === Action$ReactTemplate.GeneratingAlias) {
     var aliasStatuses = State$ReactTemplate.setAliasStatus(state, action[1], /* Saving */-674467366);
     return /* record */[
             /* aliasStatuses */aliasStatuses,
-            /* dataIsStale */state[/* dataIsStale */1],
-            /* messages */state[/* messages */2]
+            /* listIsStale */state[/* listIsStale */1],
+            /* lookupInitialValue */state[/* lookupInitialValue */2],
+            /* lookupURL */state[/* lookupURL */3],
+            /* messages */state[/* messages */4]
           ];
   } else if (action[0] === Action$ReactTemplate.GeneratedAlias) {
     var aliasStatuses$1 = State$ReactTemplate.setAliasStatus(state, action[1], /* Saved */179944039);
     return /* record */[
             /* aliasStatuses */aliasStatuses$1,
-            /* dataIsStale : true */1,
+            /* listIsStale : true */1,
+            /* lookupInitialValue */state[/* lookupInitialValue */2],
+            /* lookupURL */state[/* lookupURL */3],
             /* messages : :: */[
               /* tuple */[
                 /* Info */815031438,
@@ -35,7 +63,9 @@ function reducer(state, action) {
         ]);
     return /* record */[
             /* aliasStatuses */aliasStatuses$2,
-            /* dataIsStale */state[/* dataIsStale */1],
+            /* listIsStale */state[/* listIsStale */1],
+            /* lookupInitialValue */state[/* lookupInitialValue */2],
+            /* lookupURL */state[/* lookupURL */3],
             /* messages : :: */[
               /* tuple */[
                 /* Error */106380200,

@@ -23,7 +23,7 @@ var initial_000 = /* aliasStatuses */{ };
 
 var initial = /* record */[
   initial_000,
-  /* listIsStale : false */0,
+  /* aliasList : Loading */-700189092,
   /* lookupInitialValue */lookupInitialValue,
   /* lookupURL : Unset */974938825,
   /* messages : [] */0
@@ -31,6 +31,28 @@ var initial = /* record */[
 
 function cloneDict(d) {
   return Js_dict.fromArray(Js_dict.entries(d));
+}
+
+function markAliasListStale(state) {
+  var match = state[/* aliasList */1];
+  if (typeof match === "number") {
+    return state[/* aliasList */1];
+  } else if (match[0] !== 218348581) {
+    return state[/* aliasList */1];
+  } else {
+    var match$1 = match[1];
+    if (match$1[1] !== 431224398) {
+      return state[/* aliasList */1];
+    } else {
+      return /* `Loaded */[
+              218348581,
+              /* tuple */[
+                match$1[0],
+                /* Stale */389603065
+              ]
+            ];
+    }
+  }
 }
 
 function setAliasStatus(state, id, status) {
@@ -42,5 +64,6 @@ function setAliasStatus(state, id, status) {
 exports.lookupInitialValue = lookupInitialValue;
 exports.initial            = initial;
 exports.cloneDict          = cloneDict;
+exports.markAliasListStale = markAliasListStale;
 exports.setAliasStatus     = setAliasStatus;
 /* urlInQuery Not a pure module */

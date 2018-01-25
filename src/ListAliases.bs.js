@@ -3,15 +3,10 @@
 
 var List                       = require("bs-platform/lib/js/list.js");
 var $$Array                    = require("bs-platform/lib/js/array.js");
-var Block                      = require("bs-platform/lib/js/block.js");
-var Curry                      = require("bs-platform/lib/js/curry.js");
 var React                      = require("react");
 var Pervasives                 = require("bs-platform/lib/js/pervasives.js");
 var ReasonReact                = require("reason-react/src/ReasonReact.js");
 var Alias$ReactTemplate        = require("./alias.bs.js");
-var Store$ReactTemplate        = require("./Store/Store.bs.js");
-var Action$ReactTemplate       = require("./Store/Action.bs.js");
-var Apollo$ReactTemplate       = require("./apollo.bs.js");
 var AliasWidget$ReactTemplate  = require("./AliasWidget.bs.js");
 var QueryAliases$ReactTemplate = require("./QueryAliases.bs.js");
 
@@ -19,124 +14,64 @@ function str(prim) {
   return prim;
 }
 
-var component = ReasonReact.reducerComponent("QueryAliases");
+var component = ReasonReact.statelessComponent("QueryAliases");
 
 function make(url, appState, _) {
-  var loadList = function (url, reduce) {
-    console.log("Loading aliases of", url);
-    QueryAliases$ReactTemplate.run(url).then((function (result) {
-            if (result[0] >= 981919598) {
-              var lst = result[1].map(Alias$ReactTemplate.ofGql);
-              Store$ReactTemplate.dispatch(Action$ReactTemplate.ListIsFresh);
-              Curry._2(reduce, (function () {
-                      return /* Loaded */Block.__(1, [lst]);
-                    }), /* () */0);
-            } else {
-              var exn = result[1];
-              if (exn[0] === Apollo$ReactTemplate.ResponseError) {
-                var message = exn[2];
-                Curry._2(reduce, (function () {
-                        return /* Error */Block.__(0, ["Failed loading: " + message]);
-                      }), /* () */0);
-              } else {
-                console.log("Failed loading alias list for URL.", url, exn);
-                Curry._2(reduce, (function () {
-                        return /* Error */Block.__(0, ["Failed loading alias list. See console."]);
-                      }), /* () */0);
-              }
-            }
-            return Promise.resolve(/* () */0);
-          }));
-    return /* () */0;
-  };
-  var reloadList = function (url, reduce) {
-    Apollo$ReactTemplate.resetStore(/* () */0).then((function () {
-              loadList(url, reduce);
-              return Promise.resolve(/* () */0);
-            })).catch((function (error) {
-            console.log("Failed reloading list.", url, error);
-            Curry._2(reduce, (function () {
-                    return /* Error */Block.__(0, ["Failed reloading list. See console."]);
-                  }), /* () */0);
-            return Promise.resolve(/* () */0);
-          }));
-    return /* () */0;
-  };
   var newrecord = component.slice();
-  newrecord[/* willReceiveProps */3] = (function (param) {
-      if (appState[/* listIsStale */1]) {
-        reloadList(url, param[/* reduce */1]);
+  newrecord[/* willReceiveProps */3] = (function () {
+      var match = appState[/* aliasList */1];
+      if (typeof match !== "number") {
+        if (match[0] !== 218348581 || match[1][1] !== 389603065) {
+          
+        } else {
+          QueryAliases$ReactTemplate.reload(url);
+        }
       }
-      return param[/* state */2];
+      return /* () */0;
     });
   newrecord[/* didMount */4] = (function () {
-      return /* SideEffects */Block.__(2, [(function (param) {
-                    return loadList(url, param[/* reduce */1]);
-                  })]);
+      QueryAliases$ReactTemplate.run(url);
+      return /* NoUpdate */0;
     });
-  newrecord[/* render */9] = (function (param) {
-      var match = param[/* state */2];
-      var list = match[/* list */1];
-      var status = match[/* status */0];
-      var reduce = param[/* reduce */1];
+  newrecord[/* render */9] = (function () {
+      var match = appState[/* aliasList */1];
       var body;
-      if (typeof status === "number") {
-        if (status !== 0) {
-          if (list.length !== 0) {
-            var match$1 = List.partition((function (a) {
-                    return +(Alias$ReactTemplate.status(a) === /* Enabled */-880661407);
-                  }), $$Array.to_list(list));
-            var elementOfAlias = function (a) {
-              return ReasonReact.element(/* Some */[Pervasives.string_of_int(Alias$ReactTemplate.id(a))], /* None */0, AliasWidget$ReactTemplate.make(a, Curry._1(reduce, (function () {
-                                    return /* AliasChange */0;
-                                  })), /* array */[]));
-            };
-            body = React.createElement("div", undefined, React.createElement("div", {
-                      className: "enabled"
-                    }, React.createElement("h2", undefined, "Enabled"), $$Array.map(elementOfAlias, $$Array.of_list(match$1[0]))), React.createElement("div", {
-                      className: "disabled"
-                    }, React.createElement("h2", undefined, "Disabled"), $$Array.map(elementOfAlias, $$Array.of_list(match$1[1]))));
-          } else {
-            body = React.createElement("p", {
-                  className: "status empty"
-                }, "No aliases.");
-          }
-        } else {
-          body = React.createElement("p", {
-                className: "status loading"
-              }, "Loading...");
-        }
-      } else {
+      if (typeof match === "number") {
+        body = React.createElement("p", {
+              className: "status loading"
+            }, "Loading...");
+      } else if (match[0] >= 479410653) {
         body = React.createElement("p", {
               className: "status failure"
-            }, status[0]);
+            }, match[1]);
+      } else {
+        var match$1 = match[1];
+        var lst = match$1[0];
+        if (lst) {
+          var match$2 = List.partition((function (a) {
+                  return +(Alias$ReactTemplate.status(a) === /* Enabled */-880661407);
+                }), lst);
+          var elementOfAlias = function (a) {
+            return ReasonReact.element(/* Some */[Pervasives.string_of_int(Alias$ReactTemplate.id(a))], /* None */0, AliasWidget$ReactTemplate.make(a, (function () {
+                              return QueryAliases$ReactTemplate.reload(url);
+                            }), /* array */[]));
+          };
+          body = React.createElement("div", undefined, match$1[1] >= 724399881 ? React.createElement("p", {
+                      className: "status reloading"
+                    }, "Reloading...") : null, React.createElement("div", {
+                    className: "enabled"
+                  }, React.createElement("h2", undefined, "Enabled"), $$Array.map(elementOfAlias, $$Array.of_list(match$2[0]))), React.createElement("div", {
+                    className: "disabled"
+                  }, React.createElement("h2", undefined, "Disabled"), $$Array.map(elementOfAlias, $$Array.of_list(match$2[1]))));
+        } else {
+          body = React.createElement("p", {
+                className: "status empty"
+              }, "No aliases.");
+        }
       }
       return React.createElement("section", {
                   className: "list"
                 }, body);
-    });
-  newrecord[/* initialState */10] = (function () {
-      return /* record */[
-              /* status : Loading */0,
-              /* list : array */[]
-            ];
-    });
-  newrecord[/* reducer */12] = (function (action, _) {
-      if (typeof action === "number") {
-        return /* SideEffects */Block.__(2, [(function (param) {
-                      return reloadList(url, param[/* reduce */1]);
-                    })]);
-      } else if (action.tag) {
-        return /* Update */Block.__(0, [/* record */[
-                    /* status : Success */1,
-                    /* list */action[0]
-                  ]]);
-      } else {
-        return /* Update */Block.__(0, [/* record */[
-                    /* status : Failed */[action[0]],
-                    /* list : array */[]
-                  ]]);
-      }
     });
   return newrecord;
 }

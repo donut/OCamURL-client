@@ -5,9 +5,13 @@ var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 
 var SetLookupURL = Caml_exceptions.create("Action-ReactTemplate.SetLookupURL");
 
-var ListIsFresh = Caml_exceptions.create("Action-ReactTemplate.ListIsFresh");
+var AliasListLoading = Caml_exceptions.create("Action-ReactTemplate.AliasListLoading");
 
-var ListIsStale = Caml_exceptions.create("Action-ReactTemplate.ListIsStale");
+var AliasListLoadingFailed = Caml_exceptions.create("Action-ReactTemplate.AliasListLoadingFailed");
+
+var AliasListLoaded = Caml_exceptions.create("Action-ReactTemplate.AliasListLoaded");
+
+var AliasListIsStale = Caml_exceptions.create("Action-ReactTemplate.AliasListIsStale");
 
 var GeneratingAlias = Caml_exceptions.create("Action-ReactTemplate.GeneratingAlias");
 
@@ -17,11 +21,13 @@ var GeneratingAliasFailed = Caml_exceptions.create("Action-ReactTemplate.Generat
 
 var ReplaceState = Caml_exceptions.create("Action-ReactTemplate.ReplaceState");
 
-exports.SetLookupURL          = SetLookupURL;
-exports.ListIsFresh           = ListIsFresh;
-exports.ListIsStale           = ListIsStale;
-exports.GeneratingAlias       = GeneratingAlias;
-exports.GeneratedAlias        = GeneratedAlias;
-exports.GeneratingAliasFailed = GeneratingAliasFailed;
-exports.ReplaceState          = ReplaceState;
+exports.SetLookupURL           = SetLookupURL;
+exports.AliasListLoading       = AliasListLoading;
+exports.AliasListLoadingFailed = AliasListLoadingFailed;
+exports.AliasListLoaded        = AliasListLoaded;
+exports.AliasListIsStale       = AliasListIsStale;
+exports.GeneratingAlias        = GeneratingAlias;
+exports.GeneratedAlias         = GeneratedAlias;
+exports.GeneratingAliasFailed  = GeneratingAliasFailed;
+exports.ReplaceState           = ReplaceState;
 /* No side effect */

@@ -1,10 +1,27 @@
 
-
 let reducer = (state: State.t, action) => switch (action) {
-  |  Action.SetLookupURL(lookupURL) => { ...state, lookupURL }
+  |  Action.SetLookupURL(lookupURL) =>
+    let aliasList = 
+      (lookupURL == state.lookupURL) ? state.aliasList : `Loading;
+    { ...state, lookupURL, aliasList }
 
-  | Action.ListIsFresh => { ...state, listIsStale: false }
-  | Action.ListIsStale => { ...state, listIsStale: true  }
+  | Action.AliasListLoading =>
+    let aliasList =
+      switch (state.aliasList) {
+      | `Loaded(lst, _status) => `Loaded(lst, `Reloading)
+      | _ => `Loading
+      };
+    { ...state, aliasList }
+  
+  | Action.AliasListLoadingFailed(string) =>
+    { ...state, aliasList: `Failed(string) }
+
+  | Action.AliasListLoaded(lst) =>
+    { ...state, aliasList: `Loaded(lst, `Fresh) }
+  
+  | Action.AliasListIsStale =>
+    let aliasList = State.markAliasListStale(state);
+    { ...state, aliasList }
 
   | Action.GeneratingAlias(id) =>
     let aliasStatuses = State.setAliasStatus(state, id, `Saving);
@@ -12,7 +29,8 @@ let reducer = (state: State.t, action) => switch (action) {
 
   | Action.GeneratedAlias(id, name) => 
     let aliasStatuses = State.setAliasStatus(state, id, `Saved);
-    { ...state, aliasStatuses, listIsStale: true,
+    let aliasList = State.markAliasListStale(state);
+    { ...state, aliasStatuses, aliasList,
       messages: [(`Info, "Generated alias " ++ name ++ ".")] }
 
   | Action.GeneratingAliasFailed(id, message) =>

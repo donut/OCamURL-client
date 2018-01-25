@@ -14,9 +14,19 @@ type lookupURLStatus =
   | `Invalid(string)
   | `Unset ];
 
+type aliasListStatus =
+  [ `Fresh
+  | `Stale
+  | `Reloading ];
+
+type aliasList = 
+  [ `Loading
+  | `Failed(string)
+  | `Loaded(list(Alias.t), aliasListStatus) ];
+
 type t = {
   aliasStatuses: Js.Dict.t(saveStatus),
-  listIsStale: bool,
+  aliasList: aliasList,
   lookupInitialValue: string,
   lookupURL: lookupURLStatus,
   messages: list((messageType, string))
@@ -35,13 +45,19 @@ let lookupInitialValue = {
 
 let initial = {
   aliasStatuses: Js.Dict.empty(),
-  listIsStale: false,
+  aliasList: `Loading,
   lookupInitialValue,
   lookupURL: `Unset,
   messages: []
 };
 
 let cloneDict = (d) => d |> Js.Dict.entries |> Js.Dict.fromArray;
+
+let markAliasListStale = (state) =>
+  switch (state.aliasList) {
+  | `Loaded(lst, `Fresh) => `Loaded(lst, `Stale)
+  | _ => state.aliasList
+  };
 
 let setAliasStatus = (state, id, status) => {
   let aliasStatuses = cloneDict(state.aliasStatuses);

@@ -1,16 +1,17 @@
 
 type aliasID = string;
-type message = string;
 
 type ReduxThunk.thunk(_) +=
   | SetLookupURL(State.lookupURLStatus)
 
-  | ListIsFresh
-  | ListIsStale
+  | AliasListLoading
+  | AliasListLoadingFailed(string)
+  | AliasListLoaded(list(Alias.t))
+  | AliasListIsStale
    
   | GeneratingAlias(aliasID)
   | GeneratedAlias(aliasID, string)
-  | GeneratingAliasFailed(aliasID, message)
+  | GeneratingAliasFailed(aliasID, string)
 ;
 
 type ReduxThunk.thunk('a) +=

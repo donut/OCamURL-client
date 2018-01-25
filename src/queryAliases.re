@@ -32,9 +32,48 @@ module Config = {
 module Request = Apollo.Request(Config);
 
 let run = (~url) => {
+  Store.dispatch(Action.AliasListLoading);
+
   let variables = Some({
     "url": Url.toGql(url)
   });
 
-  Request.send(~variables);
+  Request.send(~variables)
+
+  |> Js.Promise.then_((result:Request.result) => {
+    switch (result) {
+
+    | `Exn(exn) =>
+      let message = Apollo.messageOfExn("getting alias list", ~id=url, ~exn);
+      Store.dispatch(Action.AliasListLoadingFailed(message))
+
+    | `Payload(p) =>
+      let lst = p |> Array.to_list |> List.map((a) => Alias.ofGql(a));
+      Store.dispatch(Action.AliasListLoaded(lst))
+
+    };
+    Js.Promise.resolve()
+  })
+
+  |> ignore
+};
+
+let reload = (~url) => {
+  Store.dispatch(Action.AliasListLoading);
+
+  Apollo.resetStore()
+  
+  |> Js.Promise.then_(() => {
+    run(~url);
+    Js.Promise.resolve()
+  })
+
+  |> Js.Promise.catch((error) => {
+    let message = "Failed reseting store before reloading alias list.";
+    Js.log3(message, url, error);
+    Store.dispatch(Action.AliasListLoadingFailed(message));
+    Js.Promise.resolve()
+  })
+  
+  |> ignore
 };

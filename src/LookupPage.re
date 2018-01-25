@@ -16,7 +16,7 @@ let make = (~state: State.t, ~dispatch as _, _children) => {
         | `Valid(url) =>
           <div>
             <GenerateAliasButton url state />
-            <ListAliases url state />
+            <ListAliases url aliasList=state.aliasList />
           </div>
       };
 

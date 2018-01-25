@@ -28,7 +28,7 @@ function make(state, _, _$1) {
             }, "That doesn\'t look like a valid URL: " + (String(match[1]) + ""));
       } else {
         var url = match[1];
-        details = React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, GenerateAliasButton$ReactTemplate.make(url, state, /* array */[])), ReasonReact.element(/* None */0, /* None */0, ListAliases$ReactTemplate.make(url, state, /* array */[])));
+        details = React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, GenerateAliasButton$ReactTemplate.make(url, state, /* array */[])), ReasonReact.element(/* None */0, /* None */0, ListAliases$ReactTemplate.make(url, state[/* aliasList */1], /* array */[])));
       }
       return React.createElement("section", undefined, React.createElement("h1", undefined, "OCamURL"), React.createElement("p", undefined, "Enter a URL or alias below."), ReasonReact.element(/* None */0, /* None */0, LookupInput$ReactTemplate.make(state[/* lookupInitialValue */2], (function (u) {
                             return Store$ReactTemplate.dispatch([

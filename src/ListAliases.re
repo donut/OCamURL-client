@@ -1,27 +1,41 @@
 
 let str = ReasonReact.stringToElement;
 
-let component = ReasonReact.statelessComponent("QueryAliases");
+type state = {
+  firstLoad: bool
+};
 
-let make = (~url, ~state as appState: State.t, _children) => {
+let component = ReasonReact.reducerComponent("QueryAliases");
+
+let make = (~url, ~aliasList: State.aliasList, _children) => {
   {
     ...component,
+
+    initialState: () => { firstLoad: true },
+    reducer: ((), _state: state) => ReasonReact.NoUpdate,
 
     didMount: (_self) => {
       QueryAliases.run(~url);
       ReasonReact.NoUpdate
     },
 
-    willReceiveProps: (_self) => {
-      switch (appState.aliasList) {
-      | `Loaded(_lst, `Stale) => QueryAliases.reload(~url)
-      | _ => ()
+    willReceiveProps: ({ state }) => {
+      switch (aliasList, state.firstLoad) {
+      | (`Loaded([], `Fresh), true) =>
+        MutationGenerateAlias.run(~id="alias-list", ~url)
+      | (`Loaded(_lst, `Stale), _) =>
+        QueryAliases.reload(~url)
+      | (_, _) => ()
       };
-      ()
+
+      switch (aliasList) {
+      | `Loaded(_, _) => { firstLoad: false }
+      | _ => state
+      }
     },
 
     render: (_self) => {
-      let body = switch (appState.aliasList) {
+      let body = switch (aliasList) {
       | `Loading => 
         <p className="status loading"> (str("Loading...")) </p>
       | `Failed(message) =>

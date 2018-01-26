@@ -3,6 +3,8 @@
 
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 
+var SetMessage = Caml_exceptions.create("Action-ReactTemplate.SetMessage");
+
 var SetLookupURL = Caml_exceptions.create("Action-ReactTemplate.SetLookupURL");
 
 var AliasListLoading = Caml_exceptions.create("Action-ReactTemplate.AliasListLoading");
@@ -21,6 +23,7 @@ var GeneratingAliasFailed = Caml_exceptions.create("Action-ReactTemplate.Generat
 
 var ReplaceState = Caml_exceptions.create("Action-ReactTemplate.ReplaceState");
 
+exports.SetMessage             = SetMessage;
 exports.SetLookupURL           = SetLookupURL;
 exports.AliasListLoading       = AliasListLoading;
 exports.AliasListLoadingFailed = AliasListLoadingFailed;

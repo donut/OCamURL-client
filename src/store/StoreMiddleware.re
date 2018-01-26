@@ -15,7 +15,7 @@ let logger = (store, next, action) => {
   Js.log(Reductive.Store.getState(store));
   returnValue
 };
-
+  
 
 /***
  * middleware that listens for a specific action and calls that function.

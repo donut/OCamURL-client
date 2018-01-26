@@ -30,7 +30,7 @@ type t = {
   aliasList: aliasList,
   lookupInitialValue: string,
   lookupURL: lookupURLStatus,
-  messages: list((messageType, string))
+  messages: list((messageType, string, float))
 };
 
 let lookupInitialValue = {
@@ -64,4 +64,19 @@ let setAliasStatus = (state, id, status) => {
   let aliasStatuses = cloneDict(state.aliasStatuses);
   Js.Dict.set(aliasStatuses, id, status);
   aliasStatuses
+};
+
+let stringOfMessageType = fun
+  | `Info    =>    "info"
+  | `Warning => "warning"
+  | `Error   =>   "error";
+
+let addMessage = (state, typ, message) => {
+  let expires = Js.Date.now() +. 500.;
+  [(typ, message, expires), ...state.messages]
+};
+
+let clearExpiredMessages = (state) => {
+    let now = Js.Date.now();
+    state.messages |> List.filter(((_, _, expires)) => expires > now)
 };

@@ -8,7 +8,15 @@ var Action$ReactTemplate          = require("./Action.bs.js");
 var StoreMiddleware$ReactTemplate = require("./StoreMiddleware.bs.js");
 
 function reducer(state, action) {
-  if (action[0] === Action$ReactTemplate.SetLookupURL) {
+  if (action[0] === Action$ReactTemplate.SetMessage) {
+    return /* record */[
+            /* aliasStatuses */state[/* aliasStatuses */0],
+            /* aliasList */state[/* aliasList */1],
+            /* lookupInitialValue */state[/* lookupInitialValue */2],
+            /* lookupURL */state[/* lookupURL */3],
+            /* messages */State$ReactTemplate.addMessage(state, action[1], action[2])
+          ];
+  } else if (action[0] === Action$ReactTemplate.SetLookupURL) {
     var lookupURL = action[1];
     var match = Caml_obj.caml_equal(lookupURL, state[/* lookupURL */3]);
     var aliasList = match !== 0 ? state[/* aliasList */1] : /* Unloaded */879244094;
@@ -81,18 +89,13 @@ function reducer(state, action) {
   } else if (action[0] === Action$ReactTemplate.GeneratedAlias) {
     var aliasStatuses$1 = State$ReactTemplate.setAliasStatus(state, action[1], /* Saved */179944039);
     var aliasList$3 = State$ReactTemplate.markAliasListStale(state);
+    var messages = State$ReactTemplate.addMessage(state, /* Info */815031438, "Generated alias " + (action[2] + "."));
     return /* record */[
             /* aliasStatuses */aliasStatuses$1,
             /* aliasList */aliasList$3,
             /* lookupInitialValue */state[/* lookupInitialValue */2],
             /* lookupURL */state[/* lookupURL */3],
-            /* messages : :: */[
-              /* tuple */[
-                /* Info */815031438,
-                "Generated alias " + (action[2] + ".")
-              ],
-              /* [] */0
-            ]
+            /* messages */messages
           ];
   } else if (action[0] === Action$ReactTemplate.GeneratingAliasFailed) {
     var message = action[2];
@@ -100,22 +103,33 @@ function reducer(state, action) {
           479410653,
           message
         ]);
+    var messages$1 = State$ReactTemplate.addMessage(state, /* Error */106380200, message);
     return /* record */[
             /* aliasStatuses */aliasStatuses$2,
             /* aliasList */state[/* aliasList */1],
             /* lookupInitialValue */state[/* lookupInitialValue */2],
             /* lookupURL */state[/* lookupURL */3],
-            /* messages : :: */[
-              /* tuple */[
-                /* Error */106380200,
-                message
-              ],
-              /* [] */0
-            ]
+            /* messages */messages$1
           ];
   } else {
     return state;
   }
+}
+
+function reducerWrap(state, action) {
+  var messages = State$ReactTemplate.clearExpiredMessages(state);
+  var state$prime_000 = /* aliasStatuses */state[/* aliasStatuses */0];
+  var state$prime_001 = /* aliasList */state[/* aliasList */1];
+  var state$prime_002 = /* lookupInitialValue */state[/* lookupInitialValue */2];
+  var state$prime_003 = /* lookupURL */state[/* lookupURL */3];
+  var state$prime = /* record */[
+    state$prime_000,
+    state$prime_001,
+    state$prime_002,
+    state$prime_003,
+    /* messages */messages
+  ];
+  return reducer(state$prime, action);
 }
 
 function thunkedLogger(store, next) {
@@ -126,7 +140,7 @@ function thunkedLogger(store, next) {
     });
 }
 
-var store = Reductive.Store[/* create */0](reducer, State$ReactTemplate.initial, /* Some */[thunkedLogger], /* () */0);
+var store = Reductive.Store[/* create */0](reducerWrap, State$ReactTemplate.initial, /* Some */[thunkedLogger], /* () */0);
 
 var partial_arg = Reductive.Store[/* dispatch */4];
 
@@ -135,6 +149,7 @@ function dispatch(param) {
 }
 
 exports.reducer       = reducer;
+exports.reducerWrap   = reducerWrap;
 exports.thunkedLogger = thunkedLogger;
 exports.store         = store;
 exports.dispatch      = dispatch;

@@ -69,8 +69,10 @@ let make = (~alias, ~onChange, _children) => {
     };
 
   let renameAlias = (name, reduce) => {
+    let oldName = Alias.name(alias);
+
     Js.Promise.(
-      MutateAliasName.run(~name=Alias.name(alias), ~newName=name)
+      MutateAliasName.run(~name=oldName, ~newName=name)
 
       |> then_((result:MutateAliasName.Request.result) => {
         switch result {
@@ -78,9 +80,15 @@ let make = (~alias, ~onChange, _children) => {
           handleExn("Failed renaming alias", ~id=Alias.name(alias),
                     ~exn, ~reduce)
         | `Payload(p) => switch (String.lowercase(p##actionTaken)) {
-          | "disable_and_add" => reduce((_self) => DisabledAndAdded)()
+          | "disable_and_add" =>
+            let message = {j|
+              A new alias [$name] was created and [$oldName] was disabled as 
+              it already has been used. 
+            |j};
+            Store.dispatch(Action.SetMessage(`Warning, message));
+            reduce((_self) => DisabledAndAdded)()
           | _ => reduce((_self) => Saved)()
-          };
+          }
         };
         resolve()
       })
@@ -131,7 +139,14 @@ let make = (~alias, ~onChange, _children) => {
       switch result {
       | `Exn(exn) => 
         handleExn("Failed deleting alias", ~id=Alias.name(alias), ~exn, ~reduce)
-      | `Payload(_) =>
+      | `Payload(p) =>
+        if (String.lowercase(p##actionTaken) == "disable") {
+          let message = {j|
+            The alias [$name] was only disabled since it's already been used
+            and so cannot be deleted.
+          |j};
+          Store.dispatch(Action.SetMessage(`Warning, message))
+        };
         reduce((_self) => Saved)()
       };
       Js.Promise.resolve()

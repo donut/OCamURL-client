@@ -61,9 +61,43 @@ function setAliasStatus(state, id, status) {
   return aliasStatuses;
 }
 
-exports.lookupInitialValue = lookupInitialValue;
-exports.initial            = initial;
-exports.cloneDict          = cloneDict;
-exports.markAliasListStale = markAliasListStale;
-exports.setAliasStatus     = setAliasStatus;
+function stringOfMessageType(param) {
+  if (param !== 106380200) {
+    if (param >= 815031438) {
+      return "info";
+    } else {
+      return "warning";
+    }
+  } else {
+    return "error";
+  }
+}
+
+function addMessage(state, typ, message) {
+  var expires = Date.now() + 500;
+  return /* :: */[
+          /* tuple */[
+            typ,
+            message,
+            expires
+          ],
+          state[/* messages */4]
+        ];
+}
+
+function clearExpiredMessages(state) {
+  var now = Date.now();
+  return List.filter((function (param) {
+                  return +(param[2] > now);
+                }))(state[/* messages */4]);
+}
+
+exports.lookupInitialValue   = lookupInitialValue;
+exports.initial              = initial;
+exports.cloneDict            = cloneDict;
+exports.markAliasListStale   = markAliasListStale;
+exports.setAliasStatus       = setAliasStatus;
+exports.stringOfMessageType  = stringOfMessageType;
+exports.addMessage           = addMessage;
+exports.clearExpiredMessages = clearExpiredMessages;
 /* urlInQuery Not a pure module */

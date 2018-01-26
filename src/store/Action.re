@@ -2,6 +2,8 @@
 type aliasID = string;
 
 type ReduxThunk.thunk(_) +=
+  | SetMessage(State.messageType, string)
+  
   | SetLookupURL(State.lookupURLStatus)
 
   | AliasListLoading

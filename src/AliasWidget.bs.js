@@ -9,6 +9,8 @@ var Js_boolean                        = require("bs-platform/lib/js/js_boolean.j
 var Pervasives                        = require("bs-platform/lib/js/pervasives.js");
 var ReasonReact                       = require("reason-react/src/ReasonReact.js");
 var Alias$ReactTemplate               = require("./alias.bs.js");
+var Store$ReactTemplate               = require("./Store/Store.bs.js");
+var Action$ReactTemplate              = require("./Store/Action.bs.js");
 var Apollo$ReactTemplate              = require("./apollo.bs.js");
 var MutateAliasName$ReactTemplate     = require("./MutateAliasName.bs.js");
 var MutateAliasStatus$ReactTemplate   = require("./MutateAliasStatus.bs.js");
@@ -210,10 +212,17 @@ function make(alias, onChange, _) {
                             (function (param) {
                                 var name = param[/* state */2][/* name */2];
                                 var reduce = param[/* reduce */1];
-                                MutateAliasName$ReactTemplate.run(Alias$ReactTemplate.name(alias), name).then((function (result) {
+                                var oldName = Alias$ReactTemplate.name(alias);
+                                MutateAliasName$ReactTemplate.run(oldName, name).then((function (result) {
                                         if (result[0] >= 981919598) {
                                           var match = $$String.lowercase(result[1].actionTaken);
                                           if (match === "disable_and_add") {
+                                            var message = "\n              A new alias [" + (String(name) + ("] was created and [" + (String(oldName) + "] was disabled as \n              it already has been used. \n            ")));
+                                            Store$ReactTemplate.dispatch([
+                                                  Action$ReactTemplate.SetMessage,
+                                                  /* Warning */-685964740,
+                                                  message
+                                                ]);
                                             Curry._2(reduce, (function () {
                                                     return /* DisabledAndAdded */6;
                                                   }), /* () */0);
@@ -320,6 +329,14 @@ function make(alias, onChange, _) {
                               var reduce = param[/* reduce */1];
                               MutationDeleteAlias$ReactTemplate.run(name).then((function (result) {
                                       if (result[0] >= 981919598) {
+                                        if ($$String.lowercase(result[1].actionTaken) === "disable") {
+                                          var message = "\n            The alias [" + (String(name) + "] was only disabled since it\'s already been used\n            and so cannot be deleted.\n          ");
+                                          Store$ReactTemplate.dispatch([
+                                                Action$ReactTemplate.SetMessage,
+                                                /* Warning */-685964740,
+                                                message
+                                              ]);
+                                        }
                                         Curry._2(reduce, (function () {
                                                 return /* Saved */5;
                                               }), /* () */0);

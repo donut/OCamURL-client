@@ -4,7 +4,7 @@ let mutation = [@bs] gql({|
   mutation DeleteAlias($input: DeleteAliasInput!) {
     deleteAlias(input: $input) {
       error { code, message }
-      payload { acitonTaken }
+      payload { actionTaken }
     }
   }
 |});
@@ -17,7 +17,7 @@ module Config = {
   };
 
   type payload = {.
-    actionTaken: string
+    "actionTaken": string
   };
 
   type payloadOrError = {.

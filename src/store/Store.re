@@ -1,5 +1,8 @@
 
 let reducer = (state: State.t, action) => switch (action) {
+  |  Action.SetMessage(typ, text) =>
+    { ...state, messages: State.addMessage(state, typ, text) }
+
   |  Action.SetLookupURL(lookupURL) =>
     let aliasList = 
       (lookupURL == state.lookupURL) ? state.aliasList : `Unloaded;
@@ -30,20 +33,30 @@ let reducer = (state: State.t, action) => switch (action) {
   | Action.GeneratedAlias(id, name) => 
     let aliasStatuses = State.setAliasStatus(state, id, `Saved);
     let aliasList = State.markAliasListStale(state);
-    { ...state, aliasStatuses, aliasList,
-      messages: [(`Info, "Generated alias " ++ name ++ ".")] }
+    let messages =
+      State.addMessage(state, `Info, "Generated alias " ++ name ++ ".");
+    { ...state, aliasStatuses, aliasList, messages }
 
   | Action.GeneratingAliasFailed(id, message) =>
     let aliasStatuses = State.setAliasStatus(state, id, `Failed(message));
-    { ...state, aliasStatuses, messages: [(`Error, message)] }
+    let messages = State.addMessage(state, `Error, message);
+    { ...state, aliasStatuses, messages }
   | _ => state
 };
 
+let reducerWrap = (state: State.t, action) => {
+  let messages = State.clearExpiredMessages(state);
+  let state' = { ...state, messages };
+  reducer(state', action)
+};
+
 let thunkedLogger = (store, next) => 
-  StoreMiddleware.thunk(store) @@ StoreMiddleware.logger(store) @@ next;
+  StoreMiddleware.thunk(store)
+    @@ StoreMiddleware.logger(store)
+    @@ next;
 
 let store = Reductive.Store.create(
-  ~reducer, ~preloadedState=State.initial, ~enhancer=thunkedLogger,
+  ~reducer=reducerWrap, ~preloadedState=State.initial, ~enhancer=thunkedLogger,
   ()
 );
 

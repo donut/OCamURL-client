@@ -6,7 +6,7 @@ var Pervasives           = require("bs-platform/lib/js/pervasives.js");
 var GraphqlTag           = require("graphql-tag");
 var Apollo$ReactTemplate = require("./apollo.bs.js");
 
-var mutation = GraphqlTag("\n  mutation DeleteAlias($input: DeleteAliasInput!) {\n    deleteAlias(input: $input) {\n      error { code, message }\n      payload { acitonTaken }\n    }\n  }\n");
+var mutation = GraphqlTag("\n  mutation DeleteAlias($input: DeleteAliasInput!) {\n    deleteAlias(input: $input) {\n      error { code, message }\n      payload { actionTaken }\n    }\n  }\n");
 
 var request = /* `Mutation */[
   1035765577,

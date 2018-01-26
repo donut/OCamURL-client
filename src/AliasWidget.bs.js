@@ -12,6 +12,7 @@ var Alias$ReactTemplate               = require("./alias.bs.js");
 var Store$ReactTemplate               = require("./Store/Store.bs.js");
 var Action$ReactTemplate              = require("./Store/Action.bs.js");
 var Apollo$ReactTemplate              = require("./apollo.bs.js");
+var CopyToClipboard$ReactTemplate     = require("./CopyToClipboard.bs.js");
 var MutateAliasName$ReactTemplate     = require("./MutateAliasName.bs.js");
 var MutateAliasStatus$ReactTemplate   = require("./MutateAliasStatus.bs.js");
 var MutationDeleteAlias$ReactTemplate = require("./MutationDeleteAlias.bs.js");
@@ -133,19 +134,22 @@ function make(alias, onChange, _) {
             break;
         
       }
-      var statusToggle = status >= -709493348 ? React.createElement("button", {
-              className: "status enable",
-              disabled: Js_boolean.to_js_boolean(toBool(saving)),
-              onClick: Curry._1(reduce, (function () {
-                      return /* Enable */2;
-                    }))
-            }, "Enable") : React.createElement("button", {
-              className: "status disable",
-              disabled: Js_boolean.to_js_boolean(toBool(saving)),
-              onClick: Curry._1(reduce, (function () {
-                      return /* Disable */3;
-                    }))
-            }, "Disable");
+      var match$1 = status >= -709493348 ? /* tuple */[
+          "Enable",
+          /* Disable */3
+        ] : /* tuple */[
+          "Disable",
+          /* Enable */2
+        ];
+      var action = match$1[1];
+      var label = match$1[0];
+      var statusToggle = React.createElement("button", {
+            className: "status " + label.toLowerCase(),
+            disabled: Js_boolean.to_js_boolean(toBool(saving)),
+            onClick: Curry._1(reduce, (function () {
+                    return action;
+                  }))
+          }, label);
       var deleteAction = React.createElement("button", {
             className: "delete",
             disabled: Js_boolean.to_js_boolean(toBool(saving)),
@@ -160,7 +164,7 @@ function make(alias, onChange, _) {
                       className: "status"
                     }, Alias$ReactTemplate.Status[/* toString */2](status)), React.createElement("div", {
                       className: "actions"
-                    }, statusToggle, deleteAction), message);
+                    }, statusToggle, deleteAction, ReasonReact.element(/* None */0, /* None */0, CopyToClipboard$ReactTemplate.make(name, /* array */[React.createElement("button", undefined, "Copy")]))), message);
     });
   newrecord[/* initialState */10] = (function () {
       return /* record */[

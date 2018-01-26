@@ -254,20 +254,17 @@ let make = (~alias, ~onChange, _children) => {
       | Error => <div className="saving-status error"> (str(error)) </div>
       };
 
-      let statusToggle = switch status {
-      | `Disabled =>
-        <button className="status enable"
-                onClick=(reduce((_) => Enable))
+      let statusToggle = {
+        let (label, action) = switch status {
+        | `Disabled => ("Enable", Disable)
+        | `Enabled => ("Disable", Enable)
+        };
+        <button className=("status " ++ Js.String.toLowerCase(label))
+                onClick=(reduce((_) => action))
                 disabled=(SavingStatus.toBool(saving) |> toJsBool)>
-          (str("Enable"))
+          (str(label))
         </button>
-      | `Enabled => 
-        <button className="status disable"
-                onClick=(reduce((_) => Disable))
-                disabled=(SavingStatus.toBool(saving) |> toJsBool)>
-          (str("Disable"))
-        </button>
-      };
+      }; 
 
       let deleteAction = {
         <button className="delete"
@@ -283,6 +280,9 @@ let make = (~alias, ~onChange, _children) => {
         <div className="actions">
           (statusToggle)
           (deleteAction)
+          <CopyToClipboard text=name>
+            <button>(str("Copy"))</button>
+          </CopyToClipboard>
         </div>
         (message)
       </article>

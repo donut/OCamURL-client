@@ -1,6 +1,6 @@
 
 module HTTPLink = ApolloLinks.CreateHttpLink({
-  let uri = "http://mgmt.ocamurl.d3v/graphql";
+  let uri = Config.graphqlURI;
 });
 
 /* This should be a good start for HTTP Basic auth */

@@ -280,7 +280,7 @@ let make = (~alias, ~onChange, _children) => {
         <div className="actions">
           (statusToggle)
           (deleteAction)
-          <CopyToClipboard text=name>
+          <CopyToClipboard text=(Config.aliasPrefix ++ name)>
             <button>(str("Copy"))</button>
           </CopyToClipboard>
         </div>

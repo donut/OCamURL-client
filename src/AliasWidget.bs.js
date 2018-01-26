@@ -12,6 +12,7 @@ var Alias$ReactTemplate               = require("./alias.bs.js");
 var Store$ReactTemplate               = require("./Store/Store.bs.js");
 var Action$ReactTemplate              = require("./Store/Action.bs.js");
 var Apollo$ReactTemplate              = require("./apollo.bs.js");
+var Config$ReactTemplate              = require("./Config.bs.js");
 var CopyToClipboard$ReactTemplate     = require("./CopyToClipboard.bs.js");
 var MutateAliasName$ReactTemplate     = require("./MutateAliasName.bs.js");
 var MutateAliasStatus$ReactTemplate   = require("./MutateAliasStatus.bs.js");
@@ -164,7 +165,7 @@ function make(alias, onChange, _) {
                       className: "status"
                     }, Alias$ReactTemplate.Status[/* toString */2](status)), React.createElement("div", {
                       className: "actions"
-                    }, statusToggle, deleteAction, ReasonReact.element(/* None */0, /* None */0, CopyToClipboard$ReactTemplate.make(name, /* array */[React.createElement("button", undefined, "Copy")]))), message);
+                    }, statusToggle, deleteAction, ReasonReact.element(/* None */0, /* None */0, CopyToClipboard$ReactTemplate.make(Config$ReactTemplate.aliasPrefix + name, /* array */[React.createElement("button", undefined, "Copy")]))), message);
     });
   newrecord[/* initialState */10] = (function () {
       return /* record */[

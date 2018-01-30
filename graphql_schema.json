@@ -2402,6 +2402,29 @@
           "possibleTypes": null
         },
         {
+          "kind": "ENUM",
+          "name": "AliasStatus",
+          "description": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": [
+            {
+              "name": "Disabled",
+              "description": null,
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "Enabled",
+              "description": null,
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "possibleTypes": null
+        },
+        {
           "kind": "OBJECT",
           "name": "URLParam",
           "description": null,
@@ -2704,7 +2727,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "ENUM",
-                  "name": "URLScheme",
+                  "name": "AliasStatus",
                   "ofType": null
                 }
               },

@@ -142,13 +142,13 @@
           "interfaces": null,
           "enumValues": [
             {
-              "name": "RENAME",
+              "name": "Rename",
               "description": null,
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
-              "name": "DISABLE_AND_ADD",
+              "name": "DisableAndAdd",
               "description": null,
               "isDeprecated": false,
               "deprecationReason": null
@@ -939,13 +939,13 @@
           "interfaces": null,
           "enumValues": [
             {
-              "name": "DELETE",
+              "name": "Delete",
               "description": null,
               "isDeprecated": false,
               "deprecationReason": null
             },
             {
-              "name": "DISABLE",
+              "name": "Disable",
               "description": null,
               "isDeprecated": false,
               "deprecationReason": null

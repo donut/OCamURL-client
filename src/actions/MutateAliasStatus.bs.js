@@ -7,7 +7,7 @@ var Js_dict              = require("bs-platform/lib/js/js_dict.js");
 var Js_json              = require("bs-platform/lib/js/js_json.js");
 var Pervasives           = require("bs-platform/lib/js/pervasives.js");
 var Caml_exceptions      = require("bs-platform/lib/js/caml_exceptions.js");
-var Apollo$ReactTemplate = require("./apollo.bs.js");
+var Apollo$ReactTemplate = require("../apollo.bs.js");
 
 var Graphql_error = Caml_exceptions.create("MutateAliasStatus-ReactTemplate.DisableMutation.Graphql_error");
 

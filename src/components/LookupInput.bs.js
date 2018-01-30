@@ -7,7 +7,7 @@ var React             = require("react");
 var Js_exn            = require("bs-platform/lib/js/js_exn.js");
 var $$String          = require("bs-platform/lib/js/string.js");
 var ReasonReact       = require("reason-react/src/ReasonReact.js");
-var Url$ReactTemplate = require("./url.bs.js");
+var Url$ReactTemplate = require("../url.bs.js");
 
 function str(prim) {
   return prim;

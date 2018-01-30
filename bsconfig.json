@@ -7,7 +7,10 @@
   "reason": {"react-jsx" : 2},
   "sources": [
     "src",
-    "src/Store"
+    "src/actions",
+    "src/components",
+    "src/store",
+    "src/utils"
   ],
   "package-specs": [{
     "module": "commonjs",

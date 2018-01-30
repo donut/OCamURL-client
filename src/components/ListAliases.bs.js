@@ -6,10 +6,10 @@ var $$Array                             = require("bs-platform/lib/js/array.js")
 var React                               = require("react");
 var Pervasives                          = require("bs-platform/lib/js/pervasives.js");
 var ReasonReact                         = require("reason-react/src/ReasonReact.js");
-var Alias$ReactTemplate                 = require("./alias.bs.js");
+var Alias$ReactTemplate                 = require("../alias.bs.js");
 var AliasWidget$ReactTemplate           = require("./AliasWidget.bs.js");
-var QueryAliases$ReactTemplate          = require("./QueryAliases.bs.js");
-var MutationGenerateAlias$ReactTemplate = require("./MutationGenerateAlias.bs.js");
+var QueryAliases$ReactTemplate          = require("../actions/QueryAliases.bs.js");
+var MutationGenerateAlias$ReactTemplate = require("../actions/MutationGenerateAlias.bs.js");
 
 function str(prim) {
   return prim;

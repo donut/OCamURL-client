@@ -8,7 +8,7 @@ var $$String          = require("bs-platform/lib/js/string.js");
 var Caml_format       = require("bs-platform/lib/js/caml_format.js");
 var Caml_string       = require("bs-platform/lib/js/caml_string.js");
 var Caml_exceptions   = require("bs-platform/lib/js/caml_exceptions.js");
-var Opt$ReactTemplate = require("./Opt.bs.js");
+var Opt$ReactTemplate = require("./utils/Opt.bs.js");
 
 var UnsupportedScheme = Caml_exceptions.create("Url-ReactTemplate.Scheme.UnsupportedScheme");
 

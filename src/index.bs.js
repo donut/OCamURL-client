@@ -5,8 +5,8 @@ var Curry                    = require("bs-platform/lib/js/curry.js");
 var Reductive                = require("reductive/src/reductive.js");
 var ReactDOMRe               = require("reason-react/src/ReactDOMRe.js");
 var ReasonReact              = require("reason-react/src/ReasonReact.js");
-var Store$ReactTemplate      = require("./Store/Store.bs.js");
-var LookupPage$ReactTemplate = require("./LookupPage.bs.js");
+var Store$ReactTemplate      = require("./store/Store.bs.js");
+var LookupPage$ReactTemplate = require("./components/LookupPage.bs.js");
 
 var make = Reductive.Provider[/* createMake */0](/* None */0, Store$ReactTemplate.store);
 

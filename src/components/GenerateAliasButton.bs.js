@@ -5,7 +5,7 @@ var React                               = require("react");
 var Js_boolean                          = require("bs-platform/lib/js/js_boolean.js");
 var Pervasives                          = require("bs-platform/lib/js/pervasives.js");
 var ReasonReact                         = require("reason-react/src/ReasonReact.js");
-var MutationGenerateAlias$ReactTemplate = require("./MutationGenerateAlias.bs.js");
+var MutationGenerateAlias$ReactTemplate = require("../actions/MutationGenerateAlias.bs.js");
 
 function str(prim) {
   return prim;

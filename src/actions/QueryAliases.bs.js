@@ -7,11 +7,11 @@ var Curry                = require("bs-platform/lib/js/curry.js");
 var Js_dict              = require("bs-platform/lib/js/js_dict.js");
 var Js_json              = require("bs-platform/lib/js/js_json.js");
 var Caml_exceptions      = require("bs-platform/lib/js/caml_exceptions.js");
-var Url$ReactTemplate    = require("./url.bs.js");
-var Alias$ReactTemplate  = require("./alias.bs.js");
-var Store$ReactTemplate  = require("./Store/Store.bs.js");
-var Action$ReactTemplate = require("./Store/Action.bs.js");
-var Apollo$ReactTemplate = require("./apollo.bs.js");
+var Url$ReactTemplate    = require("../url.bs.js");
+var Alias$ReactTemplate  = require("../alias.bs.js");
+var Store$ReactTemplate  = require("../store/Store.bs.js");
+var Action$ReactTemplate = require("../store/Action.bs.js");
+var Apollo$ReactTemplate = require("../apollo.bs.js");
 
 function str(prim) {
   return prim;

@@ -7,16 +7,16 @@ var Js_dict              = require("bs-platform/lib/js/js_dict.js");
 var Js_json              = require("bs-platform/lib/js/js_json.js");
 var Pervasives           = require("bs-platform/lib/js/pervasives.js");
 var Caml_exceptions      = require("bs-platform/lib/js/caml_exceptions.js");
-var Apollo$ReactTemplate = require("./apollo.bs.js");
+var Apollo$ReactTemplate = require("../apollo.bs.js");
 
-var Graphql_error = Caml_exceptions.create("MutationDeleteAlias-ReactTemplate.Mutation.Graphql_error");
+var Graphql_error = Caml_exceptions.create("MutateAliasName-ReactTemplate.Mutation.Graphql_error");
 
-var query = "mutation DeleteAlias($input: DeleteAliasInput!)  {\ndeleteAlias(input: $input)  {\nerror  {\ncode  \nmessage  \n}\npayload  {\nactionTaken  \n}\n}\n}";
+var query = "mutation RenameAlias($input: RenameAliasInput!)  {\nrenameAlias(input: $input)  {\nerror  {\ncode  \nmessage  \n}\npayload  {\nactionTaken  \n}\n}\n}";
 
 function parse(value) {
   var match = Js_json.decodeObject(value);
   if (match) {
-    var value$1 = match[0]["deleteAlias"];
+    var value$1 = match[0]["renameAlias"];
     var match$1 = Js_json.decodeObject(value$1);
     var tmp;
     if (match$1) {
@@ -79,11 +79,11 @@ function parse(value) {
           var tmp$7;
           if (match$8) {
             switch (match$8[0]) {
-              case "Delete" : 
-                  tmp$7 = /* Delete */527250507;
+              case "DisableAndAdd" : 
+                  tmp$7 = /* DisableAndAdd */503470962;
                   break;
-              case "Disable" : 
-                  tmp$7 = /* Disable */-22441528;
+              case "Rename" : 
+                  tmp$7 = /* Rename */968597406;
                   break;
               default:
                 throw Graphql_error;
@@ -107,7 +107,7 @@ function parse(value) {
       throw Graphql_error;
     }
     return {
-            deleteAlias: tmp
+            renameAlias: tmp
           };
   } else {
     throw Graphql_error;
@@ -132,7 +132,7 @@ function json_of_String(value) {
 
 var json_of_array = $$Array.map;
 
-function json_of_DeleteAliasInput(value) {
+function json_of_RenameAliasInput(value) {
   return Js_dict.fromList(/* :: */[
               /* tuple */[
                 "clientMutationId",
@@ -140,15 +140,21 @@ function json_of_DeleteAliasInput(value) {
               ],
               /* :: */[
                 /* tuple */[
-                  "disableIfUsed",
-                  json_of_optional(json_of_Boolean, value.disableIfUsed)
+                  "disableAndAddIfUsed",
+                  json_of_optional(json_of_Boolean, value.disableAndAddIfUsed)
                 ],
                 /* :: */[
                   /* tuple */[
-                    "name",
-                    value.name
+                    "newName",
+                    value.newName
                   ],
-                  /* [] */0
+                  /* :: */[
+                    /* tuple */[
+                      "name",
+                      value.name
+                    ],
+                    /* [] */0
+                  ]
                 ]
               ]
             ]);
@@ -160,7 +166,7 @@ function make(input, _) {
           variables: Js_dict.fromList(/* :: */[
                 /* tuple */[
                   "input",
-                  json_of_DeleteAliasInput(input)
+                  json_of_RenameAliasInput(input)
                 ],
                 /* [] */0
               ]),
@@ -175,15 +181,15 @@ var Mutation = /* module */[
   /* json_of_optional */json_of_optional,
   /* json_of_array */json_of_array,
   /* json_of_String */json_of_String,
-  /* json_of_DeleteAliasInput */json_of_DeleteAliasInput,
+  /* json_of_RenameAliasInput */json_of_RenameAliasInput,
   /* json_of_Boolean */json_of_Boolean,
   /* make */make
 ];
 
 function deconstructResponse(response) {
   return /* tuple */[
-          response.deleteAlias.payload,
-          response.deleteAlias.error
+          response.renameAlias.payload,
+          response.renameAlias.error
         ];
 }
 
@@ -191,12 +197,13 @@ var Config = /* module */[/* deconstructResponse */deconstructResponse];
 
 var Request = Apollo$ReactTemplate.Request(Config);
 
-function run(name) {
+function run(name, newName) {
   var now = Pervasives.string_of_float(Date.now());
   var input = {
-    clientMutationId: "deleteAlias///" + (name + ("///" + now)),
+    clientMutationId: name + ("///" + (newName + ("///" + now))),
     name: name,
-    disableIfUsed: /* Some */[true]
+    newName: newName,
+    disableAndAddIfUsed: /* Some */[true]
   };
   return Curry._1(Request[/* send */2], /* `Mutation */[
               1035765577,

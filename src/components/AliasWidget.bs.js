@@ -8,15 +8,15 @@ var $$String                          = require("bs-platform/lib/js/string.js");
 var Js_boolean                        = require("bs-platform/lib/js/js_boolean.js");
 var Pervasives                        = require("bs-platform/lib/js/pervasives.js");
 var ReasonReact                       = require("reason-react/src/ReasonReact.js");
-var Alias$ReactTemplate               = require("./alias.bs.js");
-var Store$ReactTemplate               = require("./Store/Store.bs.js");
-var Action$ReactTemplate              = require("./Store/Action.bs.js");
-var Apollo$ReactTemplate              = require("./apollo.bs.js");
-var Config$ReactTemplate              = require("./Config.bs.js");
+var Alias$ReactTemplate               = require("../alias.bs.js");
+var Store$ReactTemplate               = require("../store/Store.bs.js");
+var Action$ReactTemplate              = require("../store/Action.bs.js");
+var Apollo$ReactTemplate              = require("../apollo.bs.js");
+var Config$ReactTemplate              = require("../Config.bs.js");
 var CopyToClipboard$ReactTemplate     = require("./CopyToClipboard.bs.js");
-var MutateAliasName$ReactTemplate     = require("./MutateAliasName.bs.js");
-var MutateAliasStatus$ReactTemplate   = require("./MutateAliasStatus.bs.js");
-var MutationDeleteAlias$ReactTemplate = require("./MutationDeleteAlias.bs.js");
+var MutateAliasName$ReactTemplate     = require("../actions/MutateAliasName.bs.js");
+var MutateAliasStatus$ReactTemplate   = require("../actions/MutateAliasStatus.bs.js");
+var MutationDeleteAlias$ReactTemplate = require("../actions/MutationDeleteAlias.bs.js");
 
 function str(prim) {
   return prim;

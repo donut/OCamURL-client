@@ -3,21 +3,19 @@
 
 var Curry                = require("bs-platform/lib/js/curry.js");
 var ApolloLinks          = require("reason-apollo/src/ApolloLinks.bs.js");
-var ApolloLink           = require("apollo-link");
-var ApolloClient         = require("reason-apollo/src/ApolloClient.bs.js");
+var GraphqlTag           = require("graphql-tag");
 var ReasonApollo         = require("reason-apollo/src/ReasonApollo.bs.js");
 var Caml_exceptions      = require("bs-platform/lib/js/caml_exceptions.js");
 var ApolloInMemoryCache  = require("reason-apollo/src/ApolloInMemoryCache.bs.js");
-var JsOpt$ReactTemplate  = require("./JsOpt.bs.js");
 var Config$ReactTemplate = require("./Config.bs.js");
 
-var HTTPLink = ApolloLinks.CreateHttpLink(/* module */[/* uri */Config$ReactTemplate.graphqlURI]);
+var httpLink = ApolloLinks.createHttpLink(Config$ReactTemplate.graphqlURI, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* () */0);
 
-var inMemoryCacheObject = undefined;
+var inMemoryCache = ApolloInMemoryCache.createInMemoryCache(/* Some */[(function (obj) {
+          return obj.id;
+        })], /* () */0);
 
-var InMemoryCache = ApolloInMemoryCache.CreateInMemoryCache(/* module */[/* inMemoryCacheObject */inMemoryCacheObject]);
-
-var apolloClient = ReasonApollo.createApolloClient(InMemoryCache[/* cache */0], ApolloLink.from(/* array */[HTTPLink[/* link */0]]), /* None */0, /* None */0, /* None */0, /* None */0, /* () */0);
+var apolloClient = ReasonApollo.createApolloClient(inMemoryCache, httpLink, /* None */0, /* None */0, /* None */0, /* None */0, /* () */0);
 
 var Client = ReasonApollo.CreateClient(/* module */[/* apolloClient */apolloClient]);
 
@@ -27,77 +25,66 @@ function resetStore() {
 
 var ResponseError = Caml_exceptions.create("Apollo-ReactTemplate.ResponseError");
 
-function queryStringOfRequest(param) {
-  return param[1];
-}
-
-function Request(RequestConfig) {
-  var CastApolloClient = ApolloClient.Cast(/* module */[]);
-  var apolloClient = Client[/* apolloClient */0];
-  var SendFailure = Caml_exceptions.create("Apollo-ReactTemplate.Request(RequestConfig).SendFailure");
-  var send = function (variables) {
+function Request(Conf) {
+  var gqlQueryOfRequest = function (param) {
+    return param[1];
+  };
+  var SendFailure = Caml_exceptions.create("Apollo-ReactTemplate.Request(Conf).SendFailure");
+  var send = function (request) {
+    var requestPromise;
+    if (request[0] >= 1035765577) {
+      var mutation = request[1];
+      requestPromise = Client[/* apolloClient */0].mutate({
+            mutation: GraphqlTag(mutation.query),
+            variables: mutation.variables
+          });
+    } else {
+      var query = request[1];
+      requestPromise = Client[/* apolloClient */0].query({
+            query: GraphqlTag(query.query),
+            variables: query.variables
+          });
+    }
+    var gqlQuery = request[1];
     return new Promise((function (resolve, _) {
-                  var match = RequestConfig[/* request */0];
-                  var requestPromise;
-                  if (match[0] >= 1035765577) {
-                    var tmp = {
-                      mutation: match[1]
-                    };
-                    if (variables) {
-                      tmp.variables = variables[0];
-                    }
-                    var conf = tmp;
-                    requestPromise = apolloClient.mutate(conf);
-                  } else {
-                    var tmp$1 = {
-                      query: match[1]
-                    };
-                    if (variables) {
-                      tmp$1.variables = variables[0];
-                    }
-                    var conf$1 = tmp$1;
-                    requestPromise = apolloClient.query(conf$1);
-                  }
                   Promise.resolve(requestPromise).then((function (result) {
-                            var typedResult = result.data;
-                            var match = Curry._1(RequestConfig[/* deconstructResponse */1], typedResult);
+                            var typedResult = Curry._1(gqlQuery.parse, result.data);
+                            var match = Curry._1(Conf[/* deconstructResponse */0], typedResult);
                             var error = match[1];
                             var payload = match[0];
-                            if (JsOpt$ReactTemplate.notNull(error)) {
-                              var error$prime = JsOpt$ReactTemplate.value(error);
+                            if (error) {
+                              var error$1 = error[0];
                               resolve(/* `Exn */[
                                     3458171,
                                     [
                                       ResponseError,
-                                      error$prime.code,
-                                      error$prime.message
+                                      error$1.code,
+                                      error$1.message
                                     ]
                                   ]);
-                            } else if (JsOpt$ReactTemplate.isNull(payload)) {
-                              resolve(/* `Exn */[
-                                    3458171,
-                                    [
-                                      ResponseError,
-                                      "InternalServerError",
-                                      "Payload and error are null."
-                                    ]
-                                  ]);
-                            } else {
+                            } else if (payload) {
                               resolve(/* `Payload */[
                                     981919598,
-                                    JsOpt$ReactTemplate.value(payload)
+                                    payload[0]
+                                  ]);
+                            } else {
+                              resolve(/* `Exn */[
+                                    3458171,
+                                    [
+                                      ResponseError,
+                                      /* InternalServerError */-493013592,
+                                      "Payload and error are null."
+                                    ]
                                   ]);
                             }
                             return Promise.resolve(/* () */0);
                           })).catch((function (error) {
-                          var queryString = RequestConfig[/* request */0][1];
                           resolve(/* `Exn */[
                                 3458171,
                                 [
                                   SendFailure,
                                   error,
-                                  queryString,
-                                  variables
+                                  gqlQuery
                                 ]
                               ]);
                           return Promise.resolve(/* () */0);
@@ -106,8 +93,7 @@ function Request(RequestConfig) {
                 }));
   };
   return /* module */[
-          /* CastApolloClient */CastApolloClient,
-          /* apolloClient */apolloClient,
+          /* gqlQueryOfRequest */gqlQueryOfRequest,
           /* SendFailure */SendFailure,
           /* send */send
         ];
@@ -123,12 +109,11 @@ function messageOfExn(failedAction, id, exn) {
   }
 }
 
-exports.HTTPLink             = HTTPLink;
-exports.InMemoryCache        = InMemoryCache;
-exports.Client               = Client;
-exports.resetStore           = resetStore;
-exports.ResponseError        = ResponseError;
-exports.queryStringOfRequest = queryStringOfRequest;
-exports.Request              = Request;
-exports.messageOfExn         = messageOfExn;
-/* HTTPLink Not a pure module */
+exports.httpLink      = httpLink;
+exports.inMemoryCache = inMemoryCache;
+exports.Client        = Client;
+exports.resetStore    = resetStore;
+exports.ResponseError = ResponseError;
+exports.Request       = Request;
+exports.messageOfExn  = messageOfExn;
+/* httpLink Not a pure module */

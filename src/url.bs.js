@@ -8,7 +8,6 @@ var $$String          = require("bs-platform/lib/js/string.js");
 var Caml_format       = require("bs-platform/lib/js/caml_format.js");
 var Caml_string       = require("bs-platform/lib/js/caml_string.js");
 var Caml_exceptions   = require("bs-platform/lib/js/caml_exceptions.js");
-var Js_null_undefined = require("bs-platform/lib/js/js_null_undefined.js");
 var Opt$ReactTemplate = require("./Opt.bs.js");
 
 var UnsupportedScheme = Caml_exceptions.create("Url-ReactTemplate.Scheme.UnsupportedScheme");
@@ -157,8 +156,8 @@ function ofString$3(s) {
   (( a.href = s ));
   var prop = function (name) {
     var get = (
-      function (key, obj) { return obj[key] }
-      );
+			function (key, obj) { return obj[key] }
+			);
     return Curry._2(get, name, a);
   };
   var propOpt = function (name) {
@@ -198,19 +197,19 @@ function toGql(t) {
     return $$Array.of_list(List.map((function (p) {
                       return {
                               key: p[/* key */0],
-                              value: Js_null_undefined.from_opt(p[/* value */1])
+                              value: p[/* value */1]
                             };
                     }), p));
   };
   return {
-          scheme: $$String.uppercase(toString(t[/* scheme */1])),
-          user: Js_null_undefined.from_opt(t[/* user */2]),
-          password: Js_null_undefined.from_opt(t[/* pass */3]),
+          scheme: t[/* scheme */1],
+          user: t[/* user */2],
+          password: t[/* pass */3],
           host: t[/* host */4],
-          port: Js_null_undefined.from_opt(t[/* port */6]),
-          path: toString$1(t[/* path */5]),
-          params: Js_null_undefined.from_opt(Opt$ReactTemplate.map(paramsToGql, t[/* params */7])),
-          fragment: Js_null_undefined.from_opt(t[/* fragment */8])
+          port: t[/* port */6],
+          path: /* Some */[toString$1(t[/* path */5])],
+          params: Opt$ReactTemplate.map(paramsToGql, t[/* params */7]),
+          fragment: t[/* fragment */8]
         };
 }
 

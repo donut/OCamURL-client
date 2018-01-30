@@ -220,8 +220,12 @@ function make(alias, onChange, _) {
                                 var oldName = Alias$ReactTemplate.name(alias);
                                 MutateAliasName$ReactTemplate.run(oldName, name).then((function (result) {
                                         if (result[0] >= 981919598) {
-                                          var match = $$String.lowercase(result[1].actionTaken);
-                                          if (match === "disable_and_add") {
+                                          var match = result[1].actionTaken;
+                                          if (match !== 503470962) {
+                                            Curry._2(reduce, (function () {
+                                                    return /* Saved */5;
+                                                  }), /* () */0);
+                                          } else {
                                             var message = "\n              A new alias [" + (String(name) + ("] was created and [" + (String(oldName) + "] was disabled as \n              it already has been used. \n            ")));
                                             Store$ReactTemplate.dispatch([
                                                   Action$ReactTemplate.SetMessage,
@@ -230,10 +234,6 @@ function make(alias, onChange, _) {
                                                 ]);
                                             Curry._2(reduce, (function () {
                                                     return /* DisabledAndAdded */6;
-                                                  }), /* () */0);
-                                          } else {
-                                            Curry._2(reduce, (function () {
-                                                    return /* Saved */5;
                                                   }), /* () */0);
                                           }
                                         } else {
@@ -334,7 +334,7 @@ function make(alias, onChange, _) {
                               var reduce = param[/* reduce */1];
                               MutationDeleteAlias$ReactTemplate.run(name).then((function (result) {
                                       if (result[0] >= 981919598) {
-                                        if ($$String.lowercase(result[1].actionTaken) === "disable") {
+                                        if (result[1].actionTaken === /* Disable */-22441528) {
                                           var message = "\n            The alias [" + (String(name) + "] was only disabled since it\'s already been used\n            and so cannot be deleted.\n          ");
                                           Store$ReactTemplate.dispatch([
                                                 Action$ReactTemplate.SetMessage,

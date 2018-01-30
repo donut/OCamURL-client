@@ -1,34 +1,35 @@
 [@bs.module] external gql : ReasonApolloTypes.gql = "graphql-tag";
 
-let mutation = [@bs] gql({|
+module Mutation = [%graphql {|
   mutation RenameAlias($input: RenameAliasInput!) {
     renameAlias(input: $input) {
       error { code, message }
       payload { actionTaken }
     }
   }
-|});
+|}];
 
 module Config = {
   type input = {.
     "clientMutationId": string,
     "name": string,
     "newName": string,
-    "disableAndAddIfUsed": Js.boolean
+    "disableAndAddIfUsed": option(Js.boolean)
   };
 
+  type actionTaken = 
+    [ `DisableAndAdd | `Rename ];
+
   type payload = {.
-    "actionTaken": string
+    "actionTaken": actionTaken
   };
 
   type payloadOrError = {.
-    "error": Js.Nullable.t(Apollo.error),
-    "payload": Js.Nullable.t(payload)
+    "error": option(Apollo.error),
+    "payload": option(payload)
   };
 
   type response = {. "renameAlias": payloadOrError };
-  type variables = {. "input": input };
-  let request = `Mutation(mutation);
   let deconstructResponse = (response) => 
     (response##renameAlias##payload, response##renameAlias##error);
 };
@@ -41,9 +42,7 @@ let run = (~name, ~newName) => {
     "clientMutationId": name ++ "///" ++ newName ++ "///" ++ now,
     "name": name,
     "newName": newName,
-    "disableAndAddIfUsed": Js.true_
+    "disableAndAddIfUsed": Some(Js.true_)
   };
-  let variables = Some({"input": input});
-
-  Request.send(~variables)
+  Request.send(~request=`Mutation(Mutation.make(~input, ())))
 };

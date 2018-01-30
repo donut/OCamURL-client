@@ -79,8 +79,8 @@ let make = (~alias, ~onChange, _children) => {
         | `Exn(exn) =>
           handleExn("Failed renaming alias", ~id=Alias.name(alias),
                     ~exn, ~reduce)
-        | `Payload(p) => switch (String.lowercase(p##actionTaken)) {
-          | "disable_and_add" =>
+        | `Payload(p) => switch (p##actionTaken) {
+          | `DisableAndAdd =>
             let message = {j|
               A new alias [$name] was created and [$oldName] was disabled as 
               it already has been used. 
@@ -140,7 +140,7 @@ let make = (~alias, ~onChange, _children) => {
       | `Exn(exn) => 
         handleExn("Failed deleting alias", ~id=Alias.name(alias), ~exn, ~reduce)
       | `Payload(p) =>
-        if (String.lowercase(p##actionTaken) == "disable") {
+        if (p##actionTaken == `Disable) {
           let message = {j|
             The alias [$name] was only disabled since it's already been used
             and so cannot be deleted.

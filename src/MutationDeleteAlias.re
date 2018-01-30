@@ -1,33 +1,31 @@
 [@bs.module] external gql : ReasonApolloTypes.gql = "graphql-tag";
 
-let mutation = [@bs] gql({|
+module Mutation = [%graphql {|
   mutation DeleteAlias($input: DeleteAliasInput!) {
     deleteAlias(input: $input) {
       error { code, message }
       payload { actionTaken }
     }
   }
-|});
+|}];
 
 module Config = {
   type input = {.
     "clientMutationId": string,
     "name": string,
-    "disableIfUsed": Js.boolean
+    "disableIfUsed": option(Js.boolean)
   };
 
   type payload = {.
-    "actionTaken": string
+    "actionTaken": [ `Delete | `Disable ]
   };
 
   type payloadOrError = {.
-    "error": Js.Nullable.t(Apollo.error),
-    "payload": Js.Nullable.t(payload)
+    "error": option(Apollo.error),
+    "payload": option(payload)
   };
 
   type response = {. "deleteAlias": payloadOrError };
-  type variables = {. "input": input };
-  let request = `Mutation(mutation);
   let deconstructResponse = (response) =>
     (response##deleteAlias##payload, response##deleteAlias##error);
 };
@@ -39,10 +37,8 @@ let run = (~name) => {
   let input = {
     "clientMutationId": "deleteAlias///" ++ name ++ "///" ++ now,
     "name": name,
-    "disableIfUsed": Js.true_
+    "disableIfUsed": Some(Js.true_)
   };
-  let variables = Some({"input": input});
-
-  Request.send(~variables)
+  Request.send(~request=`Mutation(Mutation.make(~input, ())))
 };
 

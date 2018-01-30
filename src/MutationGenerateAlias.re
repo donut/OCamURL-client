@@ -1,7 +1,7 @@
 
 [@bs.module] external gql : ReasonApolloTypes.gql = "graphql-tag";
 
-let mutation = [@bs] gql({|
+module Mutation = [%graphql {|
   mutation GenerateAlias($input: GenerateAliasInput!) {
     generateAlias(input: $input) {
       error { code, message }
@@ -10,7 +10,7 @@ let mutation = [@bs] gql({|
       }
     }
   }
-|});
+|}];
 
 module Config = {
   type input = {.
@@ -28,13 +28,11 @@ module Config = {
   };
 
   type payloadOrError = {.
-    "error": Js.Nullable.t(Apollo.error),
-    "payload": Js.Nullable.t(payload)
+    "error": option(Apollo.error),
+    "payload": option(payload)
   };
 
   type response = {. "generateAlias": payloadOrError };
-  type variables = {. "input": input };
-  let request = `Mutation(mutation);
   let deconstructResponse = (response) => 
     (response##generateAlias##payload, response##generateAlias##error);
 };
@@ -49,9 +47,9 @@ let run = (~id, ~url) => {
     "clientMutationId": "generateAlias///" ++ now,
     "url": Url.toGql(url)
   };
-  let variables = Some({"input": input});
+  let request = `Mutation(Mutation.make(~input, ()));
 
-  Request.send(~variables)
+  Request.send(~request)
 
   |> Js.Promise.then_((result:Request.result) => {
     switch (result) {

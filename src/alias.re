@@ -28,12 +28,12 @@ let statusAsString = (t) => Status.toString(t.status);
 type gqlT = {.
   "id": string,
   "name": string,
-  "status": string
+  "status": Status.t
 };
 
 let ofGql = (g:gqlT) : t => {
   id: g##id |> int_of_string,
   name: g##name,
-  status: g##status |> Status.ofString
+  status: g##status
 };
 

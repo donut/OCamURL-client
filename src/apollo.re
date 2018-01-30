@@ -1,7 +1,5 @@
 
-module HTTPLink = ApolloLinks.CreateHttpLink({
-  let uri = Config.graphqlURI;
-});
+let httpLink = ApolloLinks.createHttpLink(~uri=Config.graphqlURI, ());
 
 /* This should be a good start for HTTP Basic auth */
 /* module AuthLink = CreateContextLink({
@@ -15,15 +13,17 @@ module HTTPLink = ApolloLinks.CreateHttpLink({
   };
 }); */
 
-module InMemoryCache = ApolloInMemoryCache.CreateInMemoryCache({
-  type dataObject;
-  let inMemoryCacheObject = Js.Nullable.undefined;
-});
+type dataObject = {. "__typename": string, "id": string, "key": string };
+
+let inMemoryCache = ApolloInMemoryCache.createInMemoryCache(
+  ~dataIdFromObject=(obj: dataObject) => obj##id,
+  ()
+);
 
 module Client = ReasonApollo.CreateClient({
   let apolloClient = ReasonApollo.createApolloClient(
-    ~cache=InMemoryCache.cache,
-    ~link=ApolloLinks.from([|HTTPLink.link|]),
+    ~cache=inMemoryCache,
+    ~link=httpLink,
     ()
   );
 });
@@ -36,90 +36,91 @@ module Client = ReasonApollo.CreateClient({
 let resetStore = () => resetStoreOfClient(Client.apolloClient);
 
 
-exception ResponseError(string, string);
+type errorCode = 
+  [ `BadRequest | `InternalServerError ];
 
-type error = {. "code": string, "message": string };
+type error = {. "code": errorCode, "message": string };
 
-type request = 
-  [ `Mutation(ReasonApolloTypes.queryString)
-  | `Query(ReasonApolloTypes.queryString)
-  ];
+exception ResponseError(errorCode, string);
 
-let queryStringOfRequest = fun
-  | `Mutation(q) | `Query(q) => q;
 
 module type RequestConfig = {
   type payload;
   type response;
-  type variables;
-  let request: request;
-  let deconstructResponse:
-    (response) => (Js.nullable(payload), Js.nullable(error))
+  let deconstructResponse: (response) => (option(payload), option(error))
 };
 
-module Request = (RequestConfig: RequestConfig) => {
+module Request = (Conf: RequestConfig) => {
+  external castResponse : string => {. "data": Js.Json.t } = "%identity";            
 
-  module CastApolloClient = ApolloClient.Cast({
-    type variables = RequestConfig.variables
-  });
-  let apolloClient = CastApolloClient.castClient(Client.apolloClient);
+  [@bs.module] external gql : ReasonApolloTypes.gql = "graphql-tag";
 
-  external cast : string => {. 
-    "data": RequestConfig.response, "loading": bool
-  } = "%identity";
+  type gqlQuery = {.
+    "query": string,
+    "variables": Js.Json.t,
+    "parse": (Js.Json.t) => Conf.response
+  };
 
-  exception SendFailure(Js.Promise.error,
-                        ReasonApolloTypes.queryString,
-                        option(RequestConfig.variables));
+  type request = 
+    [ `Mutation(gqlQuery)
+    | `Query(gqlQuery) ];
+
+  let gqlQueryOfRequest : (request) => gqlQuery = fun
+    | `Mutation(q) | `Query(q) => q;
+
+  exception SendFailure(Js.Promise.error, gqlQuery);
 
   type result = 
-    [ `Payload(RequestConfig.payload)
+    [ `Payload(Conf.payload)
     | `Exn(exn) ];
 
-  let send = (~variables) => {
+  let send = (~request) => {
     let module P = Js.Promise;
 
-    P.make((~resolve, ~reject) => {
-      let requestPromise = switch RequestConfig.request {
-      | `Query(query) => {
-          let conf = CastApolloClient.getJSQueryConfig(
-            ~query, ~variables=?variables, ());
-          apolloClient##query(conf) 
-        }
-      | `Mutation(mutation) => {
-          let conf = CastApolloClient.getJSMutationConfig(
-            ~mutation, ~variables=?variables, ());
-          apolloClient##mutate(conf)
-        }
-      };
+    let requestPromise = switch request {
+    | `Query(query) => 
+      Client.apolloClient##query({
+        "query": [@bs] gql(query##query),
+        "variables": query##variables
+      })
+    | `Mutation(mutation) => 
+      Client.apolloClient##mutate({
+        "mutation": [@bs] gql(mutation##query),
+        "variables": mutation##variables
+      })
+    };
+    
+    let gqlQuery = gqlQueryOfRequest(request);
 
-      /* This promise is never rejected since as of writing there does not seem
-         to be any good way with dealing with the `Js.Promise.error` abstract
-         type. */
+    P.make((~resolve, ~reject as _) => {
+      /* This promise is never rejected since, as of writing, there does not
+         seem to be any good way with dealing with the `Js.Promise.error`
+         abstract type. */
       P.resolve(requestPromise)
+
       |> P.then_((result) => {
-        let typedResult = cast(result)##data;
-        let (payload, error) = RequestConfig.deconstructResponse(typedResult);
-        if (JsOpt.notNull(error)) {
-          let error' = JsOpt.value(error);
-          [@bs] resolve(`Exn(ResponseError(error'##code, error'##message)))
-        }
-        else if (JsOpt.isNull(payload)) {
-          [@bs] resolve(`Exn(ResponseError("InternalServerError",
+        let typedResult = castResponse(result)##data |> gqlQuery##parse;
+        let (payload, error) = Conf.deconstructResponse(typedResult);
+
+        switch (payload, error) {
+        | (_payload, Some(error)) =>
+          [@bs] resolve(`Exn(ResponseError(error##code, error##message)))
+        | (None, None) =>
+          [@bs] resolve(`Exn(ResponseError(`InternalServerError,
                                            "Payload and error are null.")))
-        }
-        else {
-          [@bs] resolve(`Payload(JsOpt.value(payload)))
+        | (Some(payload), _error) =>
+          [@bs] resolve(`Payload(payload))
         };
+
         P.resolve()
       })
+
       |> P.catch((error) => {
-        let queryString = queryStringOfRequest(RequestConfig.request);
-        [@bs] resolve(`Exn(SendFailure(error, queryString, variables)));
+        [@bs] resolve(`Exn(SendFailure(error, gqlQuery)));
         P.resolve()
       })
-      |> ignore;
-      ()
+
+      |> ignore
     })
   };
 

@@ -56,7 +56,7 @@ function ofGql(g) {
   return /* record */[
           /* id */Caml_format.caml_int_of_string(g.id),
           /* name */g.name,
-          /* status */ofString(g.status)
+          /* status */g.status
         ];
 }
 

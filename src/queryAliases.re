@@ -2,29 +2,25 @@
 
 let str = ReasonReact.stringToElement;
 
-let query = [@bs] gql({|
+module Query = [%graphql {|
   query GetAliasesByURL($url: AliasesURLInput) {
     aliases(url: $url) {
       error { code, message }
       aliases { id, name, status }
     }
   }
-|});
+|}];
 
-type payload' = array(Alias.gqlT);
-
-type payloadOrError = {.
-  "error": Js.Nullable.t(Apollo.error),
-  "aliases": Js.Nullable.t(payload')
-};
-
-type result = {. "aliases": payloadOrError };
 
 module Config = {
-  type payload = payload';
-  type response = result;
-  type variables = {. "url": Url.gqlT };
-  let request = `Query(query);
+  type payload = array(Alias.gqlT);
+
+  type payloadOrError = {.
+    "error": option(Apollo.error),
+    "aliases": option(payload)
+  };
+
+  type response = {. "aliases": payloadOrError };
   let deconstructResponse = (response) => 
     (response##aliases##aliases, response##aliases##error);
 };
@@ -34,11 +30,7 @@ module Request = Apollo.Request(Config);
 let run = (~url) => {
   Store.dispatch(Action.AliasListLoading);
 
-  let variables = Some({
-    "url": Url.toGql(url)
-  });
-
-  Request.send(~variables)
+  Request.send(~request=`Query(Query.make(~url=Url.toGql(url), ())))
 
   |> Js.Promise.then_((result:Request.result) => {
     switch (result) {

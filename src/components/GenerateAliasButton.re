@@ -21,8 +21,8 @@ let make = (~url, ~state as appState: State.t, _children) => {
       let (isSaving, label) =
         switch (Js.Dict.get(appState.aliasStatuses, id)) {
         | Some(`Saving) => (true, "Generating...")
-        | None | Some(`Saved)  => (false, "Generate Alias")
-        | Some(`Failed(_)) => (false, "Failed generating. Try again?")
+        | None | Some(`Saved)  => (false, "Add Alias")
+        | Some(`Failed(_)) => (false, "Failed adding alias. Try again?")
         };
 
       <button className="add-alias"

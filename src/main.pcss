@@ -1,3 +1,203 @@
-html {
-  font-family: Arial, sans-serif;
+$header-font-family: 'Crimson Text', serif;
+$body-font-family: 'Open Sans', sans-serif;
+$content-width: 85vw;
+
+*, input, textarea, button {
+  box-sizing: border-box;
+}
+
+html,
+input, textarea, button {
+  font-family: $body-font-family;
+}
+
+h1, h2, h3 {
+  font-family: $header-font-family;
+}
+
+button {
+  padding: 0;
+  border: none;
+  color: rgb(0, 0, 238);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+
+.doc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.doc > header {
+  margin-bottom: 0.67em;
+  font-size: 84px;
+
+  h1 {
+    margin-bottom: 0;
+    font-size: 1em;
+    line-height: 1em;
+    text-align: center;
+  }
+
+  .bookmarklet {
+    display: block;
+    font-size: 1rem;
+  }
+}
+
+section.messages {
+  position: absolute; 
+  top: 0; left: 0;
+  box-shadow: 0 0 6px 0 hsla(0, 0%, 0%, 0.2);
+  background: hsl(0, 0%, 98%);
+  
+  p {
+    position: relative;
+    padding: 17px 23px;
+    margin: 0;
+  }
+
+  .warning { background-color: hsl(52, 100%, 79%); }
+  .error   { background-color: hsl( 0, 100%, 91%); }
+}
+
+
+section.lookup-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: $content-width;
+}
+
+@define-mixin lookup-form-width {
+  width: $content-width;
+  max-width: 750px;
+} 
+
+section.lookup-form {
+  @mixin lookup-form-width;
+  margin-bottom: 15px;
+  
+  label {
+    display: block;
+    font-family: $header-font-family;
+  }
+
+  input {
+    display: block;
+    width: 100%;
+    font-size: 1.5em;
+  }
+}
+
+.button-add-alias {
+  @mixin lookup-form-width;
+  text-align: right;
+
+  button { font-size: 1em; }
+}
+
+@define-mixin loading-indicator {
+  content: '§';
+  color: hsl(0, 0%, 73%);
+  font-family: $body-font-family;
+  transform-origin: center;
+  animation: rotate 0.05s linear infinite;
+}
+
+section.alias-list {
+  > h1 {
+    margin-bottom: 15px;
+    font-size: 34px;
+  }
+
+  &.status-loading, &.status-loading-reloaded {
+    > h1::after {
+      @mixin loading-indicator;
+      display: inline-block;
+      margin-left: 11px;
+      font-size: 0.8em;
+    }
+  }
+
+  .enabled h2 { display: none; }
+
+  div.enabled, div.disabled {
+    display: flex;
+    flex-wrap: wrap;
+    
+    > h2 { width: 100%; }
+  }
+
+  div.disabled { margin-top: 30px; }
+}
+
+section.alias-list article {
+  position: relative;
+  margin: 0 15px 30px 0;
+  width: calc(33% - 15px);
+  min-width: 125px; max-width: 200px;
+
+  h1 { margin: 0; }
+
+  h1 span, h1 input {
+    display: block;
+    width: 100%;
+    padding: 2px;
+    font-size: 1.1em;
+    font-family: $body-font-family;
+    font-weight: 400;
+  }
+
+  h1 span {
+    display: inline-block;
+    width: auto;
+    max-width: 100%;
+    border: 2px solid transparent;
+    overflow-wrap: break-word;
+  }
+
+  .status { display: none; }
+
+  .actions {
+    line-height: 1em;
+  }
+
+  button {
+    margin-left: 10px;
+
+    &.copy {
+      font-weight: 700;
+    }
+  }
+
+  .saving-status {
+    position: absolute;
+    top: 6px; left: calc(-1em - 3px);
+    width: 1.2em; height: 1.4em;
+    overflow: hidden;
+    color: transparent;
+
+    &::before {
+      @mixin loading-indicator;
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: @width;
+      text-align: center;
+    }
+  }
+}
+
+section.alias-list .disabled article {
+  button.status { display: inline-block; }
+  button.delete, button.copy { display: none; }
+}
+
+
+@keyframes rotate {
+  from { transform: rotate(0turn); }
+    to { transform: rotate(1turn); }
 }

@@ -36,6 +36,7 @@ let make = (~initialValue, ~onSubmit, _children) => {
 	};
 	let handleSubmit = (state) => {
 		let text = String.trim(state.value);
+		Js.log2("Submitted", text);
 		ReasonReact.UpdateWithSideEffects(
 			{...state, value: text},
 			(_self) => onSubmit(state.url)
@@ -69,14 +70,17 @@ let make = (~initialValue, ~onSubmit, _children) => {
 		render: ({ state: { value, url }, reduce }) => {
 			let status = stringOfStatus(url);
 
-			<div className=("lookup " ++ status)>
-				<input _type="url" placeholder="Paste a URL" autoFocus=Js.true_
-					value
-					onChange=(reduce(change))
-					onBlur=(reduce(submit))
-					onKeyDown=(reduce(keyDown))
+			<section className=("lookup-form " ++ status)>
+				<label htmlFor="lookup-form-url-input"> (str("Enter a URL:")) </label>
+				<input _type="url" id="lookup-form-url-input"
+							 placeholder="Paste a URL" autoFocus=Js.true_
+							 value
+							 onChange=(reduce(change))
+							 onBlur=(reduce(submit))
+							 onPaste=(reduce(submit))
+							 onKeyDown=(reduce(keyDown))
 				/>
-			</div>
+			</section>
 		}
 	}
 };

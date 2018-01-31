@@ -72,6 +72,7 @@ function make(initialValue, onSubmit, _) {
   };
   var handleSubmit = function (state) {
     var text = $$String.trim(state[/* value */0]);
+    console.log("Submitted", text);
     return /* UpdateWithSideEffects */Block.__(3, [
               /* record */[
                 /* value */text,
@@ -107,13 +108,17 @@ function make(initialValue, onSubmit, _) {
       var match = param[/* state */2];
       var reduce = param[/* reduce */1];
       var status = stringOfStatus(match[/* url */1]);
-      return React.createElement("div", {
-                  className: "lookup " + status
-                }, React.createElement("input", {
+      return React.createElement("section", {
+                  className: "lookup-form " + status
+                }, React.createElement("label", {
+                      htmlFor: "lookup-form-url-input"
+                    }, "Enter a URL:"), React.createElement("input", {
+                      id: "lookup-form-url-input",
                       autoFocus: true,
                       placeholder: "Paste a URL",
                       type: "url",
                       value: match[/* value */0],
+                      onPaste: Curry._1(reduce, submit),
                       onKeyDown: Curry._1(reduce, keyDown),
                       onBlur: Curry._1(reduce, submit),
                       onChange: Curry._1(reduce, change)

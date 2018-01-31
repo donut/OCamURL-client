@@ -18,6 +18,22 @@ function str(prim) {
 var component = ReasonReact.reducerComponent("QueryAliases");
 
 function make(url, aliasList, _) {
+  var renderList = function (lst, _) {
+    var match = List.partition((function (a) {
+            return +(Alias$ReactTemplate.status(a) === /* Enabled */-880661407);
+          }), lst);
+    var disabled = match[1];
+    var elementOfAlias = function (a) {
+      return ReasonReact.element(/* Some */[Pervasives.string_of_int(Alias$ReactTemplate.id(a))], /* None */0, AliasWidget$ReactTemplate.make(a, (function () {
+                        return QueryAliases$ReactTemplate.reload(url);
+                      }), /* array */[]));
+    };
+    return React.createElement("div", undefined, React.createElement("div", {
+                    className: "enabled"
+                  }, React.createElement("h2", undefined, "Enabled"), $$Array.map(elementOfAlias, $$Array.of_list(match[0]))), disabled ? React.createElement("div", {
+                      className: "disabled"
+                    }, React.createElement("h2", undefined, "Disabled"), $$Array.map(elementOfAlias, $$Array.of_list(disabled))) : null);
+  };
   var newrecord = component.slice();
   newrecord[/* willReceiveProps */3] = (function (param) {
       var state = param[/* state */2];
@@ -62,43 +78,45 @@ function make(url, aliasList, _) {
       return /* NoUpdate */0;
     });
   newrecord[/* render */9] = (function () {
-      var body;
+      var match;
       if (typeof aliasList === "number") {
-        body = React.createElement("p", {
-              className: "status loading"
-            }, "Loading...");
+        match = /* tuple */[
+          "loading",
+          React.createElement("p", {
+                className: "status loading"
+              }, "Loading...")
+        ];
       } else if (aliasList[0] >= 479410653) {
-        body = React.createElement("p", {
-              className: "status failure"
-            }, aliasList[1]);
+        match = /* tuple */[
+          "failed-loading",
+          React.createElement("p", {
+                className: "status failure"
+              }, aliasList[1])
+        ];
       } else {
-        var match = aliasList[1];
-        var lst = match[0];
+        var match$1 = aliasList[1];
+        var lst = match$1[0];
         if (lst) {
-          var match$1 = List.partition((function (a) {
-                  return +(Alias$ReactTemplate.status(a) === /* Enabled */-880661407);
-                }), lst);
-          var elementOfAlias = function (a) {
-            return ReasonReact.element(/* Some */[Pervasives.string_of_int(Alias$ReactTemplate.id(a))], /* None */0, AliasWidget$ReactTemplate.make(a, (function () {
-                              return QueryAliases$ReactTemplate.reload(url);
-                            }), /* array */[]));
-          };
-          body = React.createElement("div", undefined, match[1] >= 724399881 ? React.createElement("p", {
-                      className: "status reloading"
-                    }, "Reloading...") : null, React.createElement("div", {
-                    className: "enabled"
-                  }, React.createElement("h2", undefined, "Enabled"), $$Array.map(elementOfAlias, $$Array.of_list(match$1[0]))), React.createElement("div", {
-                    className: "disabled"
-                  }, React.createElement("h2", undefined, "Disabled"), $$Array.map(elementOfAlias, $$Array.of_list(match$1[1]))));
+          var status = match$1[1];
+          var status$prime = status !== 431224398 ? (
+              status >= 724399881 ? "reloading" : "stale"
+            ) : "fresh";
+          match = /* tuple */[
+            "loaded-" + status$prime,
+            renderList(lst, status)
+          ];
         } else {
-          body = React.createElement("p", {
-                className: "status empty"
-              }, "No aliases.");
+          match = /* tuple */[
+            "loaded-empty",
+            React.createElement("p", {
+                  className: "status empty"
+                }, "No aliases.")
+          ];
         }
       }
       return React.createElement("section", {
-                  className: "list"
-                }, body);
+                  className: "alias-list status-" + match[0]
+                }, React.createElement("h1", undefined, "Aliases"), match[1]);
     });
   newrecord[/* initialState */10] = (function () {
       return /* record */[/* firstLoad : true */1];

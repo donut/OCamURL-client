@@ -22,18 +22,18 @@ function make(url, appState, _) {
           typeof match === "number" ? (
               match >= 179944039 ? /* tuple */[
                   /* false */0,
-                  "Generate Alias"
+                  "Add Alias"
                 ] : /* tuple */[
                   /* true */1,
                   "Generating..."
                 ]
             ) : /* tuple */[
               /* false */0,
-              "Failed generating. Try again?"
+              "Failed adding alias. Try again?"
             ]
         ) : /* tuple */[
           /* false */0,
-          "Generate Alias"
+          "Add Alias"
         ];
       return React.createElement("button", {
                   className: "add-alias",

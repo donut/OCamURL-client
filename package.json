@@ -29,6 +29,7 @@
     "postcss-cli": "^4.1.1",
     "postcss-color-function": "^4.0.1",
     "postcss-import": "^11.0.0",
+    "postcss-mixins": "^6.2.0",
     "postcss-nested": "^3.0.0",
     "postcss-property-lookup": "^2.0.0",
     "postcss-scss": "^1.0.3",

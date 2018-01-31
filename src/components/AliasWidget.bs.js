@@ -94,7 +94,7 @@ function make(alias, onChange, _) {
       var mode = match[/* mode */0];
       var reduce = param[/* reduce */1];
       var id = Pervasives.$caret("alias-", Pervasives.string_of_int(Alias$ReactTemplate.id(alias)));
-      var header = mode >= 2 || saving === 1 ? name : (
+      var header = mode >= 2 || saving === 1 ? React.createElement("span", undefined, name) : (
           mode !== 0 ? React.createElement("input", {
                   autoFocus: true,
                   required: true,
@@ -137,10 +137,10 @@ function make(alias, onChange, _) {
       }
       var match$1 = status >= -709493348 ? /* tuple */[
           "Enable",
-          /* Disable */3
+          /* Enable */2
         ] : /* tuple */[
           "Disable",
-          /* Enable */2
+          /* Disable */3
         ];
       var action = match$1[1];
       var label = match$1[0];
@@ -165,7 +165,9 @@ function make(alias, onChange, _) {
                       className: "status"
                     }, Alias$ReactTemplate.Status[/* toString */2](status)), React.createElement("div", {
                       className: "actions"
-                    }, statusToggle, deleteAction, ReasonReact.element(/* None */0, /* None */0, CopyToClipboard$ReactTemplate.make(Config$ReactTemplate.aliasPrefix + name, /* array */[React.createElement("button", undefined, "Copy")]))), message);
+                    }, ReasonReact.element(/* None */0, /* None */0, CopyToClipboard$ReactTemplate.make(Config$ReactTemplate.aliasPrefix + name, /* array */[React.createElement("button", {
+                                    className: "copy"
+                                  }, "Copy")])), statusToggle, deleteAction), message);
     });
   newrecord[/* initialState */10] = (function () {
       return /* record */[

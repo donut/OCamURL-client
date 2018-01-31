@@ -1,5 +1,7 @@
 
 window.config = {
+  // Title of the application.
+  title: "OCamURL",
   // GraphQL server URI
   graphqlURI: "https://example.com/graphql",
   // Authorization header for GraphQL request, if necessary. Optional.

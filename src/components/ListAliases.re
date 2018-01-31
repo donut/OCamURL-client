@@ -7,8 +7,39 @@ type state = {
 
 let component = ReasonReact.reducerComponent("QueryAliases");
 
+
 let make = (~url, ~aliasList: State.aliasList, _children) => {
+
+  let renderList = (lst, status) => {
+    let (enabled, disabled) =
+      lst |> List.partition((a) => Alias.status(a) == `Enabled);
+    let elementOfAlias = (a) => {
+      <AliasWidget key=(Alias.id(a) |> string_of_int)
+                    alias=a
+                    onChange=((_) => QueryAliases.reload(~url)) />
+    };
+    let elementsOfAliases = (lst) =>
+      lst |> Array.of_list |> Array.map(elementOfAlias)
+          |> ReasonReact.arrayToElement;
+
+    <div>
+      <div className="enabled">
+        <h2>(str("Enabled"))</h2>
+        (enabled |> elementsOfAliases)
+      </div>
+      (switch (disabled) {
+      | [] => ReasonReact.nullElement
+      |  _ => 
+        <div className="disabled">
+          <h2>(str("Disabled"))</h2>
+          (disabled |> elementsOfAliases)
+        </div>
+      })
+    </div>
+  };
+
   {
+
     ...component,
 
     initialState: () => { firstLoad: true },
@@ -38,43 +69,28 @@ let make = (~url, ~aliasList: State.aliasList, _children) => {
     },
 
     render: (_self) => {
-      let body = switch (aliasList) {
+      let (status, body) = switch (aliasList) {
       | `Unloaded | `Loading => 
-        <p className="status loading"> (str("Loading...")) </p>
+        ( "loading", 
+          <p className="status loading"> (str("Loading...")) </p> )
       | `Failed(message) =>
-        <p className="status failure"> (str(message)) </p>
+        ( "failed-loading",
+          <p className="status failure"> (str(message)) </p> )
       | `Loaded([], _status) =>
-          <p className="status empty"> (str("No aliases.")) </p>
+        ( "loaded-empty",
+          <p className="status empty"> (str("No aliases.")) </p> )
       | `Loaded(lst, status) =>
-        let (enabled, disabled) =
-          lst |> List.partition((a) => Alias.status(a) == `Enabled);
-        let elementOfAlias = (a) => {
-          <AliasWidget key=(Alias.id(a) |> string_of_int)
-                       alias=a
-                       onChange=((_) => QueryAliases.reload(~url)) />
+        let status' = switch (status) {
+        | `Fresh => "fresh"
+        | `Stale => "stale"
+        | `Reloading => "reloading"
         };
-        let elementsOfAliases = (lst) =>
-          lst |> Array.of_list |> Array.map(elementOfAlias)
-              |> ReasonReact.arrayToElement;
-
-        <div>
-          (switch (status) {
-          | `Fresh | `Stale => ReasonReact.nullElement
-          | `Reloading => 
-            <p className="status reloading"> (str("Reloading...")) </p>
-          })
-          <div className="enabled">
-            <h2>(str("Enabled"))</h2>
-            (enabled |> elementsOfAliases)
-          </div>
-          <div className="disabled">
-            <h2>(str("Disabled"))</h2>
-            (disabled |> elementsOfAliases)
-          </div>
-        </div>
+        ( "loaded-" ++ status', 
+          renderList(lst, status) )
       };
       
-      <section className="list">
+      <section className=("alias-list status-" ++ status)>
+        <h1> (str("Aliases")) </h1>
         (body)
       </section>
     }

@@ -233,7 +233,7 @@ let make = (~alias, ~onChange, _children) => {
       
       let header = switch (mode, saving) {
         | (Deleted, _) | (_, Yes) =>
-          (name |> str)
+          <span> (name |> str) </span>
         | (Static, _) => 
           <span onClick=(reduce(handleHeaderClick))>
             (name |> str)
@@ -256,8 +256,8 @@ let make = (~alias, ~onChange, _children) => {
 
       let statusToggle = {
         let (label, action) = switch status {
-        | `Disabled => ("Enable", Disable)
-        | `Enabled => ("Disable", Enable)
+        | `Disabled => ("Enable", Enable)
+        | `Enabled => ("Disable", Disable)
         };
         <button className=("status " ++ Js.String.toLowerCase(label))
                 onClick=(reduce((_) => action))
@@ -278,11 +278,11 @@ let make = (~alias, ~onChange, _children) => {
         <h1> (header) </h1>
         <div className="status"> (Alias.Status.toString(status) |> str) </div>
         <div className="actions">
+          <CopyToClipboard text=(Config.aliasPrefix ++ name)>
+            <button className="copy">(str("Copy"))</button>
+          </CopyToClipboard>
           (statusToggle)
           (deleteAction)
-          <CopyToClipboard text=(Config.aliasPrefix ++ name)>
-            <button>(str("Copy"))</button>
-          </CopyToClipboard>
         </div>
         (message)
       </article>

@@ -1,17 +1,10 @@
 
 let httpLink = ApolloLinks.createHttpLink(~uri=Config.graphqlURI, ());
 
-/* This should be a good start for HTTP Basic auth */
-/* module AuthLink = CreateContextLink({
-  let contextHandler = () => {
-    let headers = {
-      "headers": {
-        "authorization": {j|Auth magic here|j}
-      }
-    };
-    headers
-  };
-}); */
+let makeAuthLink = (auth) => {
+  let contextHandler = () => { "headers": { "authorization": auth } };
+  ApolloLinks.createContextLink(contextHandler)
+};
 
 type dataObject = {. "__typename": string, "id": string, "key": string };
 
@@ -21,9 +14,14 @@ let inMemoryCache = ApolloInMemoryCache.createInMemoryCache(
 );
 
 module Client = ReasonApollo.CreateClient({
+  let links = switch (Config.graphqlAuthHeader) {
+  | None => [|httpLink|]
+  | Some(auth) => [|makeAuthLink(auth), httpLink|]
+  };
+
   let apolloClient = ReasonApollo.createApolloClient(
     ~cache=inMemoryCache,
-    ~link=httpLink,
+    ~link=ApolloLinks.from(links),
     ()
   );
 });

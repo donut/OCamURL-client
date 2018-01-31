@@ -3,6 +3,7 @@
 
 var Curry                = require("bs-platform/lib/js/curry.js");
 var ApolloLinks          = require("reason-apollo/src/ApolloLinks.bs.js");
+var ApolloLink           = require("apollo-link");
 var GraphqlTag           = require("graphql-tag");
 var ReasonApollo         = require("reason-apollo/src/ReasonApollo.bs.js");
 var Caml_exceptions      = require("bs-platform/lib/js/caml_exceptions.js");
@@ -11,11 +12,26 @@ var Config$ReactTemplate = require("./Config.bs.js");
 
 var httpLink = ApolloLinks.createHttpLink(Config$ReactTemplate.graphqlURI, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* () */0);
 
+function makeAuthLink(auth) {
+  return ApolloLinks.createContextLink((function () {
+                return {
+                        headers: {
+                          authorization: auth
+                        }
+                      };
+              }));
+}
+
 var inMemoryCache = ApolloInMemoryCache.createInMemoryCache(/* Some */[(function (obj) {
           return obj.id;
         })], /* () */0);
 
-var apolloClient = ReasonApollo.createApolloClient(inMemoryCache, httpLink, /* None */0, /* None */0, /* None */0, /* None */0, /* () */0);
+var links = Config$ReactTemplate.graphqlAuthHeader ? /* array */[
+    makeAuthLink(Config$ReactTemplate.graphqlAuthHeader[0]),
+    httpLink
+  ] : /* array */[httpLink];
+
+var apolloClient = ReasonApollo.createApolloClient(inMemoryCache, ApolloLink.from(links), /* None */0, /* None */0, /* None */0, /* None */0, /* () */0);
 
 var Client = ReasonApollo.CreateClient(/* module */[/* apolloClient */apolloClient]);
 
@@ -110,6 +126,7 @@ function messageOfExn(failedAction, id, exn) {
 }
 
 exports.httpLink      = httpLink;
+exports.makeAuthLink  = makeAuthLink;
 exports.inMemoryCache = inMemoryCache;
 exports.Client        = Client;
 exports.resetStore    = resetStore;

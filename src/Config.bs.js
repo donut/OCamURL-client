@@ -4,8 +4,13 @@
 
 var graphqlURI = window.config.graphqlURI;
 
+var graphqlAuthHeader = window.config.graphqlAuthHeader;
+
 var aliasPrefix = window.config.aliasPrefix;
 
-exports.graphqlURI  = graphqlURI;
-exports.aliasPrefix = aliasPrefix;
+var graphqlAuthHeader$1 = (graphqlAuthHeader == null) ? /* None */0 : [graphqlAuthHeader];
+
+exports.graphqlURI        = graphqlURI;
+exports.graphqlAuthHeader = graphqlAuthHeader$1;
+exports.aliasPrefix       = aliasPrefix;
 /* graphqlURI Not a pure module */

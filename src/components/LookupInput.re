@@ -12,6 +12,7 @@ type state = {
 
 type action =
 	| Change(string, status)
+	| ChangeAndSubmit(string, status)
 	| Submit
 	| KeyDown(string);
 
@@ -36,10 +37,9 @@ let make = (~initialValue, ~onSubmit, _children) => {
 	};
 	let handleSubmit = (state) => {
 		let text = String.trim(state.value);
-		Js.log2("Submitted", text);
 		ReasonReact.UpdateWithSideEffects(
 			{...state, value: text},
-			(_self) => onSubmit(state.url)
+			({ state: { url } }) => onSubmit(url)
 		)
 	};
 	let change = (event) => {
@@ -48,7 +48,13 @@ let make = (~initialValue, ~onSubmit, _children) => {
 		Change(value, checkURL(value))
 	};
 	let keyDown = (event) => KeyDown(ReactEventRe.Keyboard.key(event));
-	let submit = (_event) => Submit;
+
+	let handlePaste = (value, event) => {
+		let clipboard = ReactEventRe.Clipboard.clipboardData(event);
+		let newValue = clipboard##getData("Text") |> String.trim;
+		newValue != value ? ChangeAndSubmit(newValue, checkURL(newValue))
+											: Submit
+	};
 
 	{
 		...component,
@@ -60,11 +66,16 @@ let make = (~initialValue, ~onSubmit, _children) => {
 
 		reducer: (action, state) => switch action {
 			| Change(value, url) => ReasonReact.Update({value, url})
+			| ChangeAndSubmit(value, url) =>
+				ReasonReact.UpdateWithSideEffects(
+					{value: value, url},
+					({ state: { url } }) => onSubmit(url)
+				)
 			| Submit | KeyDown("Enter") => handleSubmit(state)
 			| KeyDown(_) => ReasonReact.NoUpdate
 		},
 
-		didMount: ({ state: { url }}) => 
+		didMount: ({ state: { value, url }}) => 
 			ReasonReact.SideEffects((_) => onSubmit(url)),
 
 		render: ({ state: { value, url }, reduce }) => {
@@ -76,8 +87,8 @@ let make = (~initialValue, ~onSubmit, _children) => {
 							 placeholder="Paste a URL" autoFocus=Js.true_
 							 value
 							 onChange=(reduce(change))
-							 onBlur=(reduce(submit))
-							 onPaste=(reduce(submit))
+							 onBlur=(reduce((_) => Submit))
+							 onPaste=(reduce(handlePaste(value)))
 							 onKeyDown=(reduce(keyDown))
 				/>
 			</section>

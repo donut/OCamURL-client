@@ -72,14 +72,13 @@ function make(initialValue, onSubmit, _) {
   };
   var handleSubmit = function (state) {
     var text = $$String.trim(state[/* value */0]);
-    console.log("Submitted", text);
     return /* UpdateWithSideEffects */Block.__(3, [
               /* record */[
                 /* value */text,
                 /* url */state[/* url */1]
               ],
-              (function () {
-                  return Curry._1(onSubmit, state[/* url */1]);
+              (function (param) {
+                  return Curry._1(onSubmit, param[/* state */2][/* url */1]);
                 })
             ]);
   };
@@ -92,10 +91,7 @@ function make(initialValue, onSubmit, _) {
             ]);
   };
   var keyDown = function ($$event) {
-    return /* KeyDown */Block.__(1, [$$event.key]);
-  };
-  var submit = function () {
-    return /* Submit */0;
+    return /* KeyDown */Block.__(2, [$$event.key]);
   };
   var newrecord = component.slice();
   newrecord[/* didMount */4] = (function (param) {
@@ -106,6 +102,7 @@ function make(initialValue, onSubmit, _) {
     });
   newrecord[/* render */9] = (function (param) {
       var match = param[/* state */2];
+      var value = match[/* value */0];
       var reduce = param[/* reduce */1];
       var status = stringOfStatus(match[/* url */1]);
       return React.createElement("section", {
@@ -117,10 +114,26 @@ function make(initialValue, onSubmit, _) {
                       autoFocus: true,
                       placeholder: "Paste a URL",
                       type: "url",
-                      value: match[/* value */0],
-                      onPaste: Curry._1(reduce, submit),
+                      value: value,
+                      onPaste: Curry._1(reduce, (function (param) {
+                              var value$1 = value;
+                              var $$event = param;
+                              var clipboard = $$event.clipboardData;
+                              var newValue = $$String.trim(clipboard.getData("Text"));
+                              var match = +(newValue !== value$1);
+                              if (match !== 0) {
+                                return /* ChangeAndSubmit */Block.__(1, [
+                                          newValue,
+                                          checkURL(newValue)
+                                        ]);
+                              } else {
+                                return /* Submit */0;
+                              }
+                            })),
                       onKeyDown: Curry._1(reduce, keyDown),
-                      onBlur: Curry._1(reduce, submit),
+                      onBlur: Curry._1(reduce, (function () {
+                              return /* Submit */0;
+                            })),
                       onChange: Curry._1(reduce, change)
                     }));
     });
@@ -133,17 +146,32 @@ function make(initialValue, onSubmit, _) {
   newrecord[/* reducer */12] = (function (action, state) {
       if (typeof action === "number") {
         return handleSubmit(state);
-      } else if (action.tag) {
-        if (action[0] === "Enter") {
-          return handleSubmit(state);
-        } else {
-          return /* NoUpdate */0;
-        }
       } else {
-        return /* Update */Block.__(0, [/* record */[
-                    /* value */action[0],
-                    /* url */action[1]
-                  ]]);
+        switch (action.tag | 0) {
+          case 0 : 
+              return /* Update */Block.__(0, [/* record */[
+                          /* value */action[0],
+                          /* url */action[1]
+                        ]]);
+          case 1 : 
+              return /* UpdateWithSideEffects */Block.__(3, [
+                        /* record */[
+                          /* value */action[0],
+                          /* url */action[1]
+                        ],
+                        (function (param) {
+                            return Curry._1(onSubmit, param[/* state */2][/* url */1]);
+                          })
+                      ]);
+          case 2 : 
+              if (action[0] === "Enter") {
+                return handleSubmit(state);
+              } else {
+                return /* NoUpdate */0;
+              }
+              break;
+          
+        }
       }
     });
   return newrecord;

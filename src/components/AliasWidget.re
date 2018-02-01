@@ -28,8 +28,7 @@ type state = {
   mode: Mode.t,
   saving: SavingStatus.t,
   name: string,
-  status: Alias.Status.t,
-  error: string
+  status: Alias.Status.t
 };
 
 type action = 
@@ -163,7 +162,6 @@ let make = (~alias, ~onChange, _children) => {
       {
         mode: Static,
         saving: No,
-        error: "",
         name: Alias.name(alias),
         status: Alias.status(alias)
       }
@@ -216,19 +214,20 @@ let make = (~alias, ~onChange, _children) => {
           (_self) => onChange()
         )
       | (Error(message), _saving) => 
-        ReasonReact.Update({...state,
-          name: Alias.name(alias),
-          status: Alias.status(alias),
-          saving: Error,
-          error: message
-        })
+        ReasonReact.UpdateWithSideEffects(
+          { ...state,
+            name: Alias.name(alias),
+            status: Alias.status(alias),
+            saving: Error },
+          (_self) => Action.SetMessage(`Error, message) |> Store.dispatch
+        )
       | (Nevermind, _saving)
       | (        _, _saving) =>  
         ReasonReact.NoUpdate
       }
     },
 
-    render: ({ state: { mode, saving, error, name, status }, reduce }) => {
+    render: ({ state: { mode, saving, name, status }, reduce }) => {
       let id = Alias.id(alias) |> string_of_int |> (++)("alias-");
       
       let header = switch (mode, saving) {
@@ -249,9 +248,8 @@ let make = (~alias, ~onChange, _children) => {
       let className = "saving-" ++ SavingStatus.toString(saving);
 
       let message = switch saving {
-      | No => ReasonReact.nullElement
+      | No | Error => ReasonReact.nullElement
       | Yes => <div className="saving-status"> (str("Saving...")) </div>
-      | Error => <div className="saving-status error"> (str(error)) </div>
       };
 
       let statusToggle = {

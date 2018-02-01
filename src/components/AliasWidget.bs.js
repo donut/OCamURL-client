@@ -118,23 +118,9 @@ function make(alias, onChange, _) {
                 }, name)
         );
       var className = "saving-" + toString$1(saving);
-      var message;
-      switch (saving) {
-        case 0 : 
-            message = null;
-            break;
-        case 1 : 
-            message = React.createElement("div", {
-                  className: "saving-status"
-                }, "Saving...");
-            break;
-        case 2 : 
-            message = React.createElement("div", {
-                  className: "saving-status error"
-                }, match[/* error */4]);
-            break;
-        
-      }
+      var message = saving !== 1 ? null : React.createElement("div", {
+              className: "saving-status"
+            }, "Saving...");
       var match$1 = status >= -709493348 ? /* tuple */[
           "Enable",
           /* Enable */2
@@ -174,8 +160,7 @@ function make(alias, onChange, _) {
               /* mode : Static */0,
               /* saving : No */0,
               /* name */Alias$ReactTemplate.name(alias),
-              /* status */Alias$ReactTemplate.status(alias),
-              /* error */""
+              /* status */Alias$ReactTemplate.status(alias)
             ];
     });
   newrecord[/* reducer */12] = (function (action, state) {
@@ -190,8 +175,7 @@ function make(alias, onChange, _) {
                             /* mode : Rename */1,
                             /* saving */state[/* saving */1],
                             /* name */state[/* name */2],
-                            /* status */state[/* status */3],
-                            /* error */state[/* error */4]
+                            /* status */state[/* status */3]
                           ]]);
               }
           case 1 : 
@@ -204,8 +188,7 @@ function make(alias, onChange, _) {
                               /* mode : Static */0,
                               /* saving */state[/* saving */1],
                               /* name */state[/* name */2],
-                              /* status */state[/* status */3],
-                              /* error */state[/* error */4]
+                              /* status */state[/* status */3]
                             ]]);
                 } else {
                   return /* UpdateWithSideEffects */Block.__(3, [
@@ -213,8 +196,7 @@ function make(alias, onChange, _) {
                               /* mode : Static */0,
                               /* saving : Yes */1,
                               /* name */state[/* name */2],
-                              /* status */state[/* status */3],
-                              /* error */state[/* error */4]
+                              /* status */state[/* status */3]
                             ],
                             (function (param) {
                                 var name = param[/* state */2][/* name */2];
@@ -262,8 +244,7 @@ function make(alias, onChange, _) {
                               /* mode */state[/* mode */0],
                               /* saving : Yes */1,
                               /* name */state[/* name */2],
-                              /* status : Enabled */-880661407,
-                              /* error */state[/* error */4]
+                              /* status : Enabled */-880661407
                             ],
                             (function (param) {
                                 var name = param[/* state */2][/* name */2];
@@ -297,8 +278,7 @@ function make(alias, onChange, _) {
                               /* mode */state[/* mode */0],
                               /* saving : Yes */1,
                               /* name */state[/* name */2],
-                              /* status : Disabled */-709493348,
-                              /* error */state[/* error */4]
+                              /* status : Disabled */-709493348
                             ],
                             (function (param) {
                                 var name = param[/* state */2][/* name */2];
@@ -328,8 +308,7 @@ function make(alias, onChange, _) {
                             /* mode : Deleted */2,
                             /* saving : Yes */1,
                             /* name */state[/* name */2],
-                            /* status : Disabled */-709493348,
-                            /* error */state[/* error */4]
+                            /* status : Disabled */-709493348
                           ],
                           (function (param) {
                               var name = param[/* state */2][/* name */2];
@@ -363,8 +342,7 @@ function make(alias, onChange, _) {
                             /* mode */state[/* mode */0],
                             /* saving : No */0,
                             /* name */state[/* name */2],
-                            /* status */state[/* status */3],
-                            /* error */state[/* error */4]
+                            /* status */state[/* status */3]
                           ],
                           (function () {
                               return Curry._1(onChange, /* () */0);
@@ -380,8 +358,7 @@ function make(alias, onChange, _) {
                             /* mode */state[/* mode */0],
                             /* saving : No */0,
                             /* name */Alias$ReactTemplate.name(alias),
-                            /* status : Disabled */-709493348,
-                            /* error */state[/* error */4]
+                            /* status : Disabled */-709493348
                           ],
                           (function () {
                               return Curry._1(onChange, /* () */0);
@@ -395,13 +372,22 @@ function make(alias, onChange, _) {
           
         }
       } else if (action.tag) {
-        return /* Update */Block.__(0, [/* record */[
+        var message = action[0];
+        return /* UpdateWithSideEffects */Block.__(3, [
+                  /* record */[
                     /* mode */state[/* mode */0],
                     /* saving : Error */2,
                     /* name */Alias$ReactTemplate.name(alias),
-                    /* status */Alias$ReactTemplate.status(alias),
-                    /* error */action[0]
-                  ]]);
+                    /* status */Alias$ReactTemplate.status(alias)
+                  ],
+                  (function () {
+                      return Store$ReactTemplate.dispatch([
+                                  Action$ReactTemplate.SetMessage,
+                                  /* Error */106380200,
+                                  message
+                                ]);
+                    })
+                ]);
       } else if (currentlySaving !== 0) {
         return /* NoUpdate */0;
       } else {
@@ -409,8 +395,7 @@ function make(alias, onChange, _) {
                     /* mode */state[/* mode */0],
                     /* saving */state[/* saving */1],
                     /* name */action[0],
-                    /* status */state[/* status */3],
-                    /* error */state[/* error */4]
+                    /* status */state[/* status */3]
                   ]]);
       }
     });

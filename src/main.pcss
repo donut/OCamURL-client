@@ -168,6 +168,7 @@ section.alias-list article {
 
   button {
     margin-left: 10px;
+    transition: color 0.25s ease-in;
 
     &.copy {
       font-weight: 700;
@@ -188,6 +189,11 @@ section.alias-list article {
       width: 100%; height: @width;
       text-align: center;
     }
+  }
+
+  &.saving-yes button {
+    color: hsla(0, 0%, 96%, 0);
+    cursor: default;
   }
 }
 

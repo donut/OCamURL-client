@@ -75,19 +75,12 @@ function make(initialValue, onSubmit, _) {
     return /* UpdateWithSideEffects */Block.__(3, [
               /* record */[
                 /* value */text,
-                /* url */state[/* url */1]
+                /* url */state[/* url */1],
+                /* wasPasted */state[/* wasPasted */2]
               ],
               (function (param) {
                   return Curry._1(onSubmit, param[/* state */2][/* url */1]);
                 })
-            ]);
-  };
-  var change = function ($$event) {
-    var el = $$event.target;
-    var value = el.value;
-    return /* Change */Block.__(0, [
-              value,
-              checkURL(value)
             ]);
   };
   var keyDown = function ($$event) {
@@ -102,7 +95,7 @@ function make(initialValue, onSubmit, _) {
     });
   newrecord[/* render */9] = (function (param) {
       var match = param[/* state */2];
-      var value = match[/* value */0];
+      var wasPasted = match[/* wasPasted */2];
       var reduce = param[/* reduce */1];
       var status = stringOfStatus(match[/* url */1]);
       return React.createElement("section", {
@@ -114,50 +107,66 @@ function make(initialValue, onSubmit, _) {
                       autoFocus: true,
                       placeholder: "Paste a URL",
                       type: "url",
-                      value: value,
-                      onPaste: Curry._1(reduce, (function (param) {
-                              var value$1 = value;
-                              var $$event = param;
-                              var clipboard = $$event.clipboardData;
-                              var newValue = $$String.trim(clipboard.getData("Text"));
-                              var match = +(newValue !== value$1);
-                              if (match !== 0) {
-                                return /* ChangeAndSubmit */Block.__(1, [
-                                          newValue,
-                                          checkURL(newValue)
-                                        ]);
-                              } else {
-                                return /* Submit */0;
-                              }
+                      value: match[/* value */0],
+                      onPaste: Curry._1(reduce, (function () {
+                              return /* Pasted */0;
                             })),
                       onKeyDown: Curry._1(reduce, keyDown),
                       onBlur: Curry._1(reduce, (function () {
-                              return /* Submit */0;
+                              return /* Submit */1;
                             })),
-                      onChange: Curry._1(reduce, change)
+                      onChange: Curry._1(reduce, (function (param) {
+                              var pasted = wasPasted;
+                              var $$event = param;
+                              var el = $$event.target;
+                              var value = pasted !== 0 ? el.value.trim() : el.value;
+                              var url = checkURL(value);
+                              if (pasted !== 0) {
+                                return /* ChangeAndSubmit */Block.__(1, [
+                                          value,
+                                          url
+                                        ]);
+                              } else {
+                                return /* Change */Block.__(0, [
+                                          value,
+                                          url
+                                        ]);
+                              }
+                            }))
                     }));
     });
   newrecord[/* initialState */10] = (function () {
       return /* record */[
               /* value */$$String.trim(initialValue),
-              /* url */checkURL(initialValue)
+              /* url */checkURL(initialValue),
+              /* wasPasted : false */0
             ];
     });
   newrecord[/* reducer */12] = (function (action, state) {
       if (typeof action === "number") {
-        return handleSubmit(state);
+        if (action) {
+          return handleSubmit(state);
+        } else {
+          return /* Update */Block.__(0, [/* record */[
+                      /* value */state[/* value */0],
+                      /* url */state[/* url */1],
+                      /* wasPasted : true */1
+                    ]]);
+        }
       } else {
         switch (action.tag | 0) {
           case 0 : 
               return /* Update */Block.__(0, [/* record */[
                           /* value */action[0],
-                          /* url */action[1]
+                          /* url */action[1],
+                          /* wasPasted */state[/* wasPasted */2]
                         ]]);
           case 1 : 
               return /* UpdateWithSideEffects */Block.__(3, [
                         /* record */[
                           /* value */action[0],
-                          /* url */action[1]
+                          /* url */action[1],
+                          /* wasPasted : false */0
                         ],
                         (function (param) {
                             return Curry._1(onSubmit, param[/* state */2][/* url */1]);

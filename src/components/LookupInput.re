@@ -1,5 +1,7 @@
 let str = ReasonReact.stringToElement;
 
+[@bs.val] external setTimeout : (unit => unit, int) => int = "";
+
 type status = [ `Valid(Url.t) | `Invalid(string) | `Unset ];
 
 let stringOfStatus = fun 
@@ -8,11 +10,13 @@ let stringOfStatus = fun
 type state = {
   value: string,
   url: status,
+  wasPasted: bool
 };
 
 type action =
   | Change(string, status)
   | ChangeAndSubmit(string, status)
+  | Pasted
   | Submit
   | KeyDown(string);
 
@@ -38,47 +42,43 @@ let make = (~initialValue, ~onSubmit, _children) => {
   let handleSubmit = (state) => {
     let text = String.trim(state.value);
     ReasonReact.UpdateWithSideEffects(
-      {...state, value: text},
+      { ...state, value: text },
       ({ state: { url } }) => onSubmit(url)
     )
   };
-  let change = (event) => {
+  let change = (pasted, event) => {
     let el = event |> ReactEventRe.Form.target |> ReactDOMRe.domElementToObj;
-    let value = el##value;
-    Change(value, checkURL(value))
+    let value = pasted ? Js.String.trim(el##value) : el##value;
+    let url = checkURL(value);
+    pasted ? ChangeAndSubmit(value, url) : Change(value, url)
   };
   let keyDown = (event) => KeyDown(ReactEventRe.Keyboard.key(event));
-
-  let handlePaste = (value, event) => {
-    let clipboard = ReactEventRe.Clipboard.clipboardData(event);
-    let newValue = clipboard##getData("Text") |> String.trim;
-    newValue != value ? ChangeAndSubmit(newValue, checkURL(newValue))
-                      : Submit
-  };
 
   {
     ...component,
 
     initialState: () => {
       value: String.trim(initialValue),
-      url: checkURL(initialValue)
+      url: checkURL(initialValue),
+      wasPasted: false
     },
 
     reducer: (action, state) => switch action {
-      | Change(value, url) => ReasonReact.Update({value, url})
+      | Change(value, url) => ReasonReact.Update({ ...state, value, url })
       | ChangeAndSubmit(value, url) =>
         ReasonReact.UpdateWithSideEffects(
-          {value: value, url},
+          { value, url, wasPasted: false },
           ({ state: { url } }) => onSubmit(url)
         )
+      | Pasted => ReasonReact.Update({ ...state, wasPasted: true })
       | Submit | KeyDown("Enter") => handleSubmit(state)
       | KeyDown(_) => ReasonReact.NoUpdate
     },
 
-    didMount: ({ state: { value, url }}) => 
+    didMount: ({ state: { url }}) => 
       ReasonReact.SideEffects((_) => onSubmit(url)),
 
-    render: ({ state: { value, url }, reduce }) => {
+    render: ({ state: { value, url, wasPasted }, reduce }) => {
       let status = stringOfStatus(url);
 
       <section className=("lookup-form " ++ status)>
@@ -86,9 +86,9 @@ let make = (~initialValue, ~onSubmit, _children) => {
         <input _type="url" id="lookup-form-url-input"
                placeholder="Paste a URL" autoFocus=Js.true_
                value
-               onChange=(reduce(change))
+               onChange=(reduce(change(wasPasted)))
                onBlur=(reduce((_) => Submit))
-               onPaste=(reduce(handlePaste(value)))
+               onPaste=(reduce((_) => Pasted))
                onKeyDown=(reduce(keyDown))
         />
       </section>

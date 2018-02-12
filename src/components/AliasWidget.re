@@ -2,15 +2,6 @@
 let str = ReasonReact.stringToElement;
 let toJsBool = Js.Boolean.to_js_boolean;
 
-module Mode = {
-  type t = Static | Rename | Deleted;
-
-  let toString = fun
-    | Static => "static"
-    | Rename => "rename"
-    | Deleted => "deleted";
-};
-
 module SavingStatus = {
  type t = No | Yes | Error;
 
@@ -25,14 +16,12 @@ module SavingStatus = {
 };
 
 type state = {
-  mode: Mode.t,
   saving: SavingStatus.t,
   name: string,
   status: Alias.Status.t
 };
 
 type action = 
-  | EnterRenameMode
   | InputChange(string)
   | Rename
   | Enable
@@ -54,8 +43,6 @@ let handleExn = (failedAction, ~id, ~exn, ~reduce) => switch exn {
 let component = ReasonReact.reducerComponent("AliasWidget");
 
 let make = (~alias, ~onChange, _children) => {
-  let handleHeaderClick = (_event) => EnterRenameMode;
-
   let handleChange = (event) => {
     let el = event |> ReactEventRe.Form.target |> ReactDOMRe.domElementToObj;
     InputChange(el##value)
@@ -160,7 +147,6 @@ let make = (~alias, ~onChange, _children) => {
 
     initialState: () => {
       {
-        mode: Static,
         saving: No,
         name: Alias.name(alias),
         status: Alias.status(alias)
@@ -170,15 +156,13 @@ let make = (~alias, ~onChange, _children) => {
     reducer: (action, state) => {
       let currentlySaving = SavingStatus.toBool(state.saving);
       switch (action, currentlySaving) {
-      | (EnterRenameMode, false) =>
-        ReasonReact.Update({...state, mode: Rename})
       | (InputChange(name), false) =>
         ReasonReact.Update({...state, name})
       | (Rename, false) => switch (state.name == Alias.name(alias)) {
-        | true => ReasonReact.Update({...state, mode: Static })
+        | true => ReasonReact.NoUpdate
         | false =>
           ReasonReact.UpdateWithSideEffects(
-            {...state, mode: Static, saving: Yes },
+            {...state, saving: Yes },
             ({ state: { name }, reduce }) => renameAlias(name, reduce)
           )
         }
@@ -200,7 +184,7 @@ let make = (~alias, ~onChange, _children) => {
         }
       | (Delete, false) =>
         ReasonReact.UpdateWithSideEffects(
-          {...state, mode: Deleted, saving: Yes, status: `Disabled },
+          {...state, saving: Yes, status: `Disabled },
           ({ state: { name }, reduce }) => deleteAlias(name, reduce)
         )
       | (Saved, true) =>
@@ -210,13 +194,12 @@ let make = (~alias, ~onChange, _children) => {
         )
       | (DisabledAndAdded, true) =>
         ReasonReact.UpdateWithSideEffects(
-          {...state, name: Alias.name(alias), status: `Disabled, saving: No},
+          { name: Alias.name(alias), status: `Disabled, saving: No },
           (_self) => onChange()
         )
       | (Error(message), _saving) => 
         ReasonReact.UpdateWithSideEffects(
-          { ...state,
-            name: Alias.name(alias),
+          { name: Alias.name(alias),
             status: Alias.status(alias),
             saving: Error },
           (_self) => Action.SetMessage(`Error, message) |> Store.dispatch
@@ -227,18 +210,14 @@ let make = (~alias, ~onChange, _children) => {
       }
     },
 
-    render: ({ state: { mode, saving, name, status }, reduce }) => {
+    render: ({ state: { saving, name, status }, reduce }) => {
       let id = Alias.id(alias) |> string_of_int |> (++)("alias-");
       
-      let header = switch (mode, saving) {
-        | (Deleted, _) | (_, Yes) =>
-          <span> (name |> str) </span>
-        | (Static, _) => 
-          <span onClick=(reduce(handleHeaderClick))>
-            (name |> str)
-          </span>
-        | (Rename, _) => 
-          <input value=name required=Js.true_ autoFocus=Js.true_ 
+      let header = switch (saving) {
+        | Yes =>
+          <input value=name disabled=Js.true_ />
+        | No | Error => 
+          <input value=name required=Js.true_ 
             onChange=(reduce(handleChange))
             onBlur=(reduce((_) => Rename))
             onKeyDown=(reduce(actOnEnter(Rename)))

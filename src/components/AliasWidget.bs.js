@@ -22,20 +22,6 @@ function str(prim) {
   return prim;
 }
 
-function toString(param) {
-  switch (param) {
-    case 0 : 
-        return "static";
-    case 1 : 
-        return "rename";
-    case 2 : 
-        return "deleted";
-    
-  }
-}
-
-var Mode = /* module */[/* toString */toString];
-
 function toBool(param) {
   if (param !== 1) {
     return /* false */0;
@@ -44,7 +30,7 @@ function toBool(param) {
   }
 }
 
-function toString$1(param) {
+function toString(param) {
   switch (param) {
     case 0 : 
         return "no";
@@ -58,7 +44,7 @@ function toString$1(param) {
 
 var SavingStatus = /* module */[
   /* toBool */toBool,
-  /* toString */toString$1
+  /* toString */toString
 ];
 
 function handleExn(failedAction, id, exn, reduce) {
@@ -78,9 +64,6 @@ function handleExn(failedAction, id, exn, reduce) {
 var component = ReasonReact.reducerComponent("AliasWidget");
 
 function make(alias, onChange, _) {
-  var handleHeaderClick = function () {
-    return /* EnterRenameMode */0;
-  };
   var handleChange = function ($$event) {
     var el = $$event.target;
     return /* InputChange */Block.__(0, [el.value]);
@@ -88,45 +71,42 @@ function make(alias, onChange, _) {
   var newrecord = component.slice();
   newrecord[/* render */9] = (function (param) {
       var match = param[/* state */2];
-      var status = match[/* status */3];
-      var name = match[/* name */2];
-      var saving = match[/* saving */1];
-      var mode = match[/* mode */0];
+      var status = match[/* status */2];
+      var name = match[/* name */1];
+      var saving = match[/* saving */0];
       var reduce = param[/* reduce */1];
       var id = Pervasives.$caret("alias-", Pervasives.string_of_int(Alias$ReactTemplate.id(alias)));
-      var header = mode >= 2 || saving === 1 ? React.createElement("span", undefined, name) : (
-          mode !== 0 ? React.createElement("input", {
-                  autoFocus: true,
-                  required: true,
-                  value: name,
-                  onKeyDown: Curry._1(reduce, (function (param) {
-                          var action = /* Rename */1;
-                          var $$event = param;
-                          var match = $$String.lowercase($$event.key);
-                          if (match === "enter") {
-                            return action;
-                          } else {
-                            return /* Nevermind */7;
-                          }
-                        })),
-                  onBlur: Curry._1(reduce, (function () {
-                          return /* Rename */1;
-                        })),
-                  onChange: Curry._1(reduce, handleChange)
-                }) : React.createElement("span", {
-                  onClick: Curry._1(reduce, handleHeaderClick)
-                }, name)
-        );
-      var className = "saving-" + toString$1(saving);
+      var header = saving !== 1 ? React.createElement("input", {
+              required: true,
+              value: name,
+              onKeyDown: Curry._1(reduce, (function (param) {
+                      var action = /* Rename */0;
+                      var $$event = param;
+                      var match = $$String.lowercase($$event.key);
+                      if (match === "enter") {
+                        return action;
+                      } else {
+                        return /* Nevermind */6;
+                      }
+                    })),
+              onBlur: Curry._1(reduce, (function () {
+                      return /* Rename */0;
+                    })),
+              onChange: Curry._1(reduce, handleChange)
+            }) : React.createElement("input", {
+              disabled: true,
+              value: name
+            });
+      var className = "saving-" + toString(saving);
       var message = saving !== 1 ? null : React.createElement("div", {
               className: "saving-status"
             }, "Saving...");
       var match$1 = status >= -709493348 ? /* tuple */[
           "Enable",
-          /* Enable */2
+          /* Enable */1
         ] : /* tuple */[
           "Disable",
-          /* Disable */3
+          /* Disable */2
         ];
       var action = match$1[1];
       var label = match$1[0];
@@ -141,7 +121,7 @@ function make(alias, onChange, _) {
             className: "delete",
             disabled: Js_boolean.to_js_boolean(toBool(saving)),
             onClick: Curry._1(reduce, (function () {
-                    return /* Delete */4;
+                    return /* Delete */3;
                   }))
           }, "Delete");
       return React.createElement("article", {
@@ -157,49 +137,31 @@ function make(alias, onChange, _) {
     });
   newrecord[/* initialState */10] = (function () {
       return /* record */[
-              /* mode : Static */0,
               /* saving : No */0,
               /* name */Alias$ReactTemplate.name(alias),
               /* status */Alias$ReactTemplate.status(alias)
             ];
     });
   newrecord[/* reducer */12] = (function (action, state) {
-      var currentlySaving = toBool(state[/* saving */1]);
+      var currentlySaving = toBool(state[/* saving */0]);
       if (typeof action === "number") {
         switch (action) {
           case 0 : 
               if (currentlySaving !== 0) {
                 return /* NoUpdate */0;
               } else {
-                return /* Update */Block.__(0, [/* record */[
-                            /* mode : Rename */1,
-                            /* saving */state[/* saving */1],
-                            /* name */state[/* name */2],
-                            /* status */state[/* status */3]
-                          ]]);
-              }
-          case 1 : 
-              if (currentlySaving !== 0) {
-                return /* NoUpdate */0;
-              } else {
-                var match = +(state[/* name */2] === Alias$ReactTemplate.name(alias));
+                var match = +(state[/* name */1] === Alias$ReactTemplate.name(alias));
                 if (match !== 0) {
-                  return /* Update */Block.__(0, [/* record */[
-                              /* mode : Static */0,
-                              /* saving */state[/* saving */1],
-                              /* name */state[/* name */2],
-                              /* status */state[/* status */3]
-                            ]]);
+                  return /* NoUpdate */0;
                 } else {
                   return /* UpdateWithSideEffects */Block.__(3, [
                             /* record */[
-                              /* mode : Static */0,
                               /* saving : Yes */1,
-                              /* name */state[/* name */2],
-                              /* status */state[/* status */3]
+                              /* name */state[/* name */1],
+                              /* status */state[/* status */2]
                             ],
                             (function (param) {
-                                var name = param[/* state */2][/* name */2];
+                                var name = param[/* state */2][/* name */1];
                                 var reduce = param[/* reduce */1];
                                 var oldName = Alias$ReactTemplate.name(alias);
                                 MutateAliasName$ReactTemplate.run(oldName, name).then((function (result) {
@@ -207,7 +169,7 @@ function make(alias, onChange, _) {
                                           var match = result[1].actionTaken;
                                           if (match !== 503470962) {
                                             Curry._2(reduce, (function () {
-                                                    return /* Saved */5;
+                                                    return /* Saved */4;
                                                   }), /* () */0);
                                           } else {
                                             var message = "\n              A new alias [" + (String(name) + ("] was created and [" + (String(oldName) + "] was disabled as \n              it already has been used. \n            ")));
@@ -217,7 +179,7 @@ function make(alias, onChange, _) {
                                                   message
                                                 ]);
                                             Curry._2(reduce, (function () {
-                                                    return /* DisabledAndAdded */6;
+                                                    return /* DisabledAndAdded */5;
                                                   }), /* () */0);
                                           }
                                         } else {
@@ -231,31 +193,63 @@ function make(alias, onChange, _) {
                 }
               }
               break;
-          case 2 : 
+          case 1 : 
               if (currentlySaving !== 0) {
                 return /* NoUpdate */0;
               } else {
-                var match$1 = +(state[/* status */3] === /* Enabled */-880661407);
+                var match$1 = +(state[/* status */2] === /* Enabled */-880661407);
                 if (match$1 !== 0) {
                   return /* NoUpdate */0;
                 } else {
                   return /* UpdateWithSideEffects */Block.__(3, [
                             /* record */[
-                              /* mode */state[/* mode */0],
                               /* saving : Yes */1,
-                              /* name */state[/* name */2],
+                              /* name */state[/* name */1],
                               /* status : Enabled */-880661407
                             ],
                             (function (param) {
-                                var name = param[/* state */2][/* name */2];
+                                var name = param[/* state */2][/* name */1];
                                 var reduce = param[/* reduce */1];
                                 MutateAliasStatus$ReactTemplate.run(name, /* Enable */756818595).then((function (result) {
                                         if (result[0] >= 981919598) {
                                           Curry._2(reduce, (function () {
-                                                  return /* Saved */5;
+                                                  return /* Saved */4;
                                                 }), /* () */0);
                                         } else {
                                           handleExn("Failed enabling alias", Alias$ReactTemplate.name(alias), result[1], reduce);
+                                        }
+                                        return Promise.resolve(/* () */0);
+                                      }));
+                                return /* () */0;
+                              })
+                          ]);
+                }
+              }
+              break;
+          case 2 : 
+              if (currentlySaving !== 0) {
+                return /* NoUpdate */0;
+              } else {
+                var match$2 = +(state[/* status */2] === /* Disabled */-709493348);
+                if (match$2 !== 0) {
+                  return /* NoUpdate */0;
+                } else {
+                  return /* UpdateWithSideEffects */Block.__(3, [
+                            /* record */[
+                              /* saving : Yes */1,
+                              /* name */state[/* name */1],
+                              /* status : Disabled */-709493348
+                            ],
+                            (function (param) {
+                                var name = param[/* state */2][/* name */1];
+                                var reduce = param[/* reduce */1];
+                                MutateAliasStatus$ReactTemplate.run(name, /* Disable */-22441528).then((function (result) {
+                                        if (result[0] >= 981919598) {
+                                          Curry._2(reduce, (function () {
+                                                  return /* Saved */4;
+                                                }), /* () */0);
+                                        } else {
+                                          handleExn("Failed disabling alias", Alias$ReactTemplate.name(alias), result[1], reduce);
                                         }
                                         return Promise.resolve(/* () */0);
                                       }));
@@ -269,49 +263,14 @@ function make(alias, onChange, _) {
               if (currentlySaving !== 0) {
                 return /* NoUpdate */0;
               } else {
-                var match$2 = +(state[/* status */3] === /* Disabled */-709493348);
-                if (match$2 !== 0) {
-                  return /* NoUpdate */0;
-                } else {
-                  return /* UpdateWithSideEffects */Block.__(3, [
-                            /* record */[
-                              /* mode */state[/* mode */0],
-                              /* saving : Yes */1,
-                              /* name */state[/* name */2],
-                              /* status : Disabled */-709493348
-                            ],
-                            (function (param) {
-                                var name = param[/* state */2][/* name */2];
-                                var reduce = param[/* reduce */1];
-                                MutateAliasStatus$ReactTemplate.run(name, /* Disable */-22441528).then((function (result) {
-                                        if (result[0] >= 981919598) {
-                                          Curry._2(reduce, (function () {
-                                                  return /* Saved */5;
-                                                }), /* () */0);
-                                        } else {
-                                          handleExn("Failed disabling alias", Alias$ReactTemplate.name(alias), result[1], reduce);
-                                        }
-                                        return Promise.resolve(/* () */0);
-                                      }));
-                                return /* () */0;
-                              })
-                          ]);
-                }
-              }
-              break;
-          case 4 : 
-              if (currentlySaving !== 0) {
-                return /* NoUpdate */0;
-              } else {
                 return /* UpdateWithSideEffects */Block.__(3, [
                           /* record */[
-                            /* mode : Deleted */2,
                             /* saving : Yes */1,
-                            /* name */state[/* name */2],
+                            /* name */state[/* name */1],
                             /* status : Disabled */-709493348
                           ],
                           (function (param) {
-                              var name = param[/* state */2][/* name */2];
+                              var name = param[/* state */2][/* name */1];
                               var reduce = param[/* reduce */1];
                               MutationDeleteAlias$ReactTemplate.run(name).then((function (result) {
                                       if (result[0] >= 981919598) {
@@ -324,7 +283,7 @@ function make(alias, onChange, _) {
                                               ]);
                                         }
                                         Curry._2(reduce, (function () {
-                                                return /* Saved */5;
+                                                return /* Saved */4;
                                               }), /* () */0);
                                       } else {
                                         handleExn("Failed deleting alias", Alias$ReactTemplate.name(alias), result[1], reduce);
@@ -335,14 +294,13 @@ function make(alias, onChange, _) {
                             })
                         ]);
               }
-          case 5 : 
+          case 4 : 
               if (currentlySaving !== 0) {
                 return /* UpdateWithSideEffects */Block.__(3, [
                           /* record */[
-                            /* mode */state[/* mode */0],
                             /* saving : No */0,
-                            /* name */state[/* name */2],
-                            /* status */state[/* status */3]
+                            /* name */state[/* name */1],
+                            /* status */state[/* status */2]
                           ],
                           (function () {
                               return Curry._1(onChange, /* () */0);
@@ -351,11 +309,10 @@ function make(alias, onChange, _) {
               } else {
                 return /* NoUpdate */0;
               }
-          case 6 : 
+          case 5 : 
               if (currentlySaving !== 0) {
                 return /* UpdateWithSideEffects */Block.__(3, [
                           /* record */[
-                            /* mode */state[/* mode */0],
                             /* saving : No */0,
                             /* name */Alias$ReactTemplate.name(alias),
                             /* status : Disabled */-709493348
@@ -367,7 +324,7 @@ function make(alias, onChange, _) {
               } else {
                 return /* NoUpdate */0;
               }
-          case 7 : 
+          case 6 : 
               return /* NoUpdate */0;
           
         }
@@ -375,7 +332,6 @@ function make(alias, onChange, _) {
         var message = action[0];
         return /* UpdateWithSideEffects */Block.__(3, [
                   /* record */[
-                    /* mode */state[/* mode */0],
                     /* saving : Error */2,
                     /* name */Alias$ReactTemplate.name(alias),
                     /* status */Alias$ReactTemplate.status(alias)
@@ -392,10 +348,9 @@ function make(alias, onChange, _) {
         return /* NoUpdate */0;
       } else {
         return /* Update */Block.__(0, [/* record */[
-                    /* mode */state[/* mode */0],
-                    /* saving */state[/* saving */1],
+                    /* saving */state[/* saving */0],
                     /* name */action[0],
-                    /* status */state[/* status */3]
+                    /* status */state[/* status */2]
                   ]]);
       }
     });
@@ -406,7 +361,6 @@ var toJsBool = Js_boolean.to_js_boolean;
 
 exports.str          = str;
 exports.toJsBool     = toJsBool;
-exports.Mode         = Mode;
 exports.SavingStatus = SavingStatus;
 exports.handleExn    = handleExn;
 exports.component    = component;

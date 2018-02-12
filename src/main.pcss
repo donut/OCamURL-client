@@ -144,23 +144,20 @@ section.alias-list article {
 
   h1 { margin: 0; }
 
-  h1 span, h1 input {
+  input {
     display: block;
     width: 100%;
     padding: 2px;
-    border-width: 2px;
+    border: 2px solid transparent;
     margin: 0;
     font-size: 1.1em;
     font-family: $body-font-family;
     font-weight: 400;
-  }
+    transition: border-color 0.25s ease-out;
 
-  h1 span {
-    display: inline-block;
-    width: auto;
-    max-width: 100%;
-    border: 2px solid transparent;
-    overflow-wrap: break-word;
+    &:focus, &:hover {
+      border-color: rgb(238, 238, 238);
+    }
   }
 
   .status { display: none; }

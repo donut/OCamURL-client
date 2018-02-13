@@ -105,16 +105,27 @@ let ofString = (s) => {
 		| "" => None
 		|  s => Some(s)
 	};
-	let propExn = (name) => switch (propOpt(name)) {
-		| None => raise(MissingPart(name, s))
-		| Some(s) => s
+
+	/* Since we set the passed URL `s` to the `href` of an <a>, if what is 
+	 * passed doesn't include a protocol and domain, it assumes it's relative
+	 * to the current protocol and domain. That's likely not the intention of 
+	 * the user. This verifies what may have been assumed actually exists in the
+	 * passed URL. */
+	let scheme = prop("protocol");
+	if (not @@ Js.String.includes(scheme, s)) {
+		raise(MissingPart("protocol (\"http://\" or \"https://\")", s))
+	};
+
+	let hostname = prop("hostname");
+	if (not @@ Js.String.includes(hostname, s)) {
+		raise(MissingPart("domain (example.com)", s))
 	};
 
 	make(
-		~scheme = prop("protocol") |> Scheme.ofString,
+		~scheme = scheme |> Scheme.ofString,
 		~user =? propOpt("username"),
 		~pass =? propOpt("password"),
-		~host = propExn("hostname"),
+		~host = hostname,
 		~port =? propOpt("port") |> Opt.map(int_of_string),
 		~path = prop("pathname"),
 		~query =? propOpt("search"),

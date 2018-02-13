@@ -168,19 +168,23 @@ function ofString$3(s) {
       return /* Some */[s];
     }
   };
-  var propExn = function (name) {
-    var match = propOpt(name);
-    if (match) {
-      return match[0];
-    } else {
-      throw [
-            MissingPart,
-            name,
-            s
-          ];
-    }
-  };
-  return make(/* None */0, ofString(prop("protocol")), propOpt("username"), propOpt("password"), propExn("hostname"), Opt$ReactTemplate.map(Caml_format.caml_int_of_string, propOpt("port")), /* Some */[prop("pathname")], propOpt("search"), propOpt("hash"), /* () */0);
+  var scheme = prop("protocol");
+  if (!s.includes(scheme)) {
+    throw [
+          MissingPart,
+          "protocol (\"http://\" or \"https://\")",
+          s
+        ];
+  }
+  var hostname = prop("hostname");
+  if (!s.includes(hostname)) {
+    throw [
+          MissingPart,
+          "domain (example.com)",
+          s
+        ];
+  }
+  return make(/* None */0, ofString(scheme), propOpt("username"), propOpt("password"), hostname, Opt$ReactTemplate.map(Caml_format.caml_int_of_string, propOpt("port")), /* Some */[prop("pathname")], propOpt("search"), propOpt("hash"), /* () */0);
 }
 
 function ofStringOpt$1(s) {

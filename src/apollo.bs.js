@@ -24,7 +24,7 @@ function makeAuthLink(auth) {
 
 var inMemoryCache = ApolloInMemoryCache.createInMemoryCache(/* Some */[(function (obj) {
           return obj.id;
-        })], /* () */0);
+        })], /* None */0, /* () */0);
 
 var links = Config$ReactTemplate.graphqlAuthHeader ? /* array */[
     makeAuthLink(Config$ReactTemplate.graphqlAuthHeader[0]),

@@ -6,7 +6,10 @@
     "watch-reason": "bsb -make-world -w",
     "clean-reason": "bsb -clean-world",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch-css": "postcss src/main.pcss --dir build/ --ext css --watch",
+    "build-css":
+      "postcss src/main.pcss --dir build/ --ext css --verbose",
+    "watch-css":
+      "postcss src/main.pcss --dir build/ --ext css --watch --verbose",
     "webpack": "webpack -w"
   },
   "keywords": [
@@ -21,12 +24,12 @@
     "apollo-link-context": "^1.0.3",
     "apollo-link-error": "^1.0.3",
     "apollo-link-http": "^1.3.2",
-    "autoprefixer": "^7.2.5",
+    "autoprefixer": "^8.0.0",
     "bs-webapi": "0.8.2",
     "graphql": "^0.11.0",
     "graphql-tag": "^2.6.0",
     "graphql_ppx": "0.2.0",
-    "postcss-cli": "^4.1.1",
+    "postcss-cli": "^5.0.0",
     "postcss-color-function": "^4.0.1",
     "postcss-import": "^11.0.0",
     "postcss-mixins": "^6.2.0",

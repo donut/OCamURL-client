@@ -1,5 +1,5 @@
 {
-  "name": "client",
+  "name": "OCamURL-client",
   "version": "0.1.0",
   "scripts": {
     "build-reason": "bsb -make-world",

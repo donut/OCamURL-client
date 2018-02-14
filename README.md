@@ -1,8 +1,8 @@
 # OCamURL Client #
 
-A web client for [OCamURL Server URL Shortener][ocurl-server].
+A web client for [OCamURL-server URL shortener][ocurl-server].
 
-[ocurl-server]: /rightthisminute/ocamurl-server
+[ocurl-server]: https://github.com/RightThisMinute/OCamURL-server
 
 ## Building ##
 
@@ -31,15 +31,15 @@ Probably the first major refactor should be to move the state handling to reduce
 
 ### Look into HOC for GraphQL Queries ###
 
-[Reason Apollo][] basically only has one way to handle quries and mutations: higher-order components (HOC). This hasn't clicked for me, yet. The main issues I see are how side-effects and state updates are handled with HOC queries and mutations. Some more [details on my confusion][my-reasons]. And someone else who's [running into trouble][issue].
+[Reason Apollo][] basically only has one built-in way to handle quries and mutations: higher-order components (HOC). This hasn't clicked for me, yet. The main issues I see are how side-effects and state updates are handled with HOC queries and mutations. Some more [details on my confusion][my-reasons]. And someone else who's [running into trouble][issue].
 
-For now I've built around this with the [`Apollo.Request`][Apollo.Request] functor, which generates non-component modules for queries and mutations. It also includes special error handlers for how [the unconventional way OCamURL-server handles errors][server-err-handling].
+For now I've built around this with the [`Apollo.Request`][Apollo.Request] functor, which returns non-component modules for queries and mutations. It also includes special error handlers for [the unconventional way OCamURL-server returns errors][server-err-handling].
 
 [Reason Apollo]: https://github.com/apollographql/reason-apollo
 [my-reasons]: https://github.com/apollographql/reason-apollo/pull/6#issuecomment-352019099
 [issue]: https://github.com/apollographql/reason-apollo/issues/33
-[Apollo.Request]: blob/master/src/apollo.re
-[server-err-handling]: /rightthisminute/ocamurl-server#graphql-error-handling
+[Apollo.Request]: /src/apollo.re
+[server-err-handling]: https://github.com/RightThisMinute/OCamURL-server/tree/ac2c52c54d91e330bd3ca87adcb71e995092e4bf#graphql-error-handling
 
 
 ## Project Expectations ##

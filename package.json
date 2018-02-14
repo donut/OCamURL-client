@@ -6,11 +6,13 @@
     "watch-reason": "bsb -make-world -w",
     "clean-reason": "bsb -clean-world",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": "webpack",
+    "webpack-watch": "webpack -w",
     "build-css":
       "postcss src/main.pcss --dir build/ --ext css --verbose",
     "watch-css":
       "postcss src/main.pcss --dir build/ --ext css --watch --verbose",
-    "webpack": "webpack -w"
+    "build": "npm run build-reason && npm run webpack && npm run build-css"
   },
   "keywords": [
     "BuckleScript"

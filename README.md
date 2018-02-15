@@ -4,6 +4,10 @@ A web client for [OCamURL-server URL shortener][ocurl-server].
 
 [ocurl-server]: https://github.com/RightThisMinute/OCamURL-server
 
+## Why ReasonML ##
+
+Throughout development and after release, a few have asked why I chose Reason instead of OCaml since both can be transpiled to JavaScript and I already wrote the server in OCaml. Reason just has better syntax for JS interop. I definitely prefer OCaml's syntax, but Reason is not that different and it makes working in React much easier.
+
 ## Building ##
 
 ```
